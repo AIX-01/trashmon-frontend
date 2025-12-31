@@ -1,21 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // PWA 설정을 위한 헤더 추가
-  async headers() {
-    return [
-      {
-        source: '/sw.js',
-        headers: [
-          {
-            key: 'Service-Worker-Allowed',
-            value: '/'
-          }
-        ]
-      }
-    ];
+  output: 'export',
+
+  images: {
+    unoptimized: true,
   },
-  // 정적 내보내기 비활성화 (CSR 모드)
+
   reactStrictMode: true,
+
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;
