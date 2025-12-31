@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CollectionData } from '@/types';
 import { MONSTER_DATA } from '@/lib/monsters';
 import MonsterCharacter from '@/components/MonsterCharacter';
+import PokedexModal from '@/components/PokedexModal'; // PokedexModal 임포트
 
 const COLLECTION_KEY = 'trash-collection';
 
@@ -67,11 +68,14 @@ const CharacterComponent: React.FC<{ character: Character }> = ({ character }) =
 const FarmPage = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const [isPokedexOpen, setIsPokedexOpen] = useState(false); // Pokedex Modal 상태
+  const [collectionData, setCollectionData] = useState<CollectionData>({}); // 도감 데이터
   const farmRef = useRef<HTMLDivElement>(null);
 
   // 2. Unlock Flow (Initialize characters from localStorage)
   useEffect(() => {
     const saved: CollectionData = JSON.parse(localStorage.getItem(COLLECTION_KEY) || '{}');
+    setCollectionData(saved); // 도감 데이터 설정
     const farmBounds = farmRef.current?.getBoundingClientRect();
 
     const initialCharacters: Character[] = Object.values(saved).map(item => ({
@@ -151,10 +155,19 @@ const FarmPage = () => {
   return (
     // 5. Visual Feel
     <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-b from-sky-300 to-sky-100">
-        {/* Back Button */}
-        <Link href="/" className="absolute top-4 left-4 z-20 bg-yellow-400 text-white p-3 rounded-full shadow-lg hover:bg-yellow-500 transition">
-            🏠
-        </Link>
+        {/* Navigation Buttons */}
+        <div className="absolute top-4 left-4 z-20 flex gap-2">
+            <Link href="/" className="bg-yellow-400 text-white p-3 rounded-full shadow-lg hover:bg-yellow-500 transition">
+                🏠
+            </Link>
+            <button
+                onClick={() => setIsPokedexOpen(true)}
+                className="bg-purple-500 text-white p-3 rounded-full shadow-lg hover:bg-purple-600 transition"
+                aria-label="도감 보기"
+            >
+                📚
+            </button>
+        </div>
       
       {/* Farm Area */}
       <div 
@@ -178,6 +191,12 @@ const FarmPage = () => {
             </div>
         )}
       </div>
+      
+      <PokedexModal
+        isOpen={isPokedexOpen}
+        onClose={() => setIsPokedexOpen(false)}
+        collection={collectionData}
+      />
     </div>
   );
 };
