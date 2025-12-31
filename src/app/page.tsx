@@ -6,10 +6,12 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import CameraCapture from '@/components/CameraCapture';
 import MonsterCharacter from '@/components/MonsterCharacter';
 import RecyclingGuide from '@/components/RecyclingGuide';
-import Collection, { CollectionData } from '@/components/Collection';
+import { CollectionData } from '@/types';
+import { MONSTER_DATA } from '@/lib/monsters';
 
 // API 서버 주소
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -36,7 +38,6 @@ export default function HomePage() {
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [error, setError] = useState<string>('');
   const [isGuideComplete, setIsGuideComplete] = useState(false);
-  const [isCollectionOpen, setIsCollectionOpen] = useState(false);
 
   /**
    * 도감에 새로운 쓰레기 저장
@@ -86,16 +87,9 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error('분류 요청 실패:', err);
-      const mockCategories = ['종이', '유리', '플라스틱', '캔', '일반쓰레기'];
+      const mockCategories = Object.keys(MONSTER_DATA);
       const randomCategory = mockCategories[Math.floor(Math.random() * mockCategories.length)];
-      const mockGuides: Record<string, ClassificationResult['guide']> = {
-        '종이': { bin_color: '파란색', message: '종이는 파란색 통에 쏙!', tips: ['물에 젖지 않게, 테이프는 떼고 버려요.'], monster_color: '#4A90D9' },
-        '유리': { bin_color: '초록색', message: '유리병은 초록색 통에 쏙!', tips: ['뚜껑을 떼고, 안을 한번 헹궈서 버려요.'], monster_color: '#7CB342' },
-        '플라스틱': { bin_color: '노란색', message: '플라스틱은 노란색 통에 쏙!', tips: ['라벨을 떼고, 깨끗이 씻어서 버려요.'], monster_color: '#FFD54F' },
-        '캔': { bin_color: '빨간색', message: '캔은 빨간색 통에 쏙!', tips: ['납작하게 밟아서, 조심해서 버려요.'], monster_color: '#EF5350' },
-        '일반쓰레기': { bin_color: '검은색', message: '일반쓰레기는 아무 통에나!', tips: ['재활용이 어려운 친구들이에요.'], monster_color: '#78909C' }
-      };
-      const mockResult = { success: true, category: randomCategory, confidence: 0.85, guide: mockGuides[randomCategory] };
+      const mockResult = { success: true, category: randomCategory, confidence: 0.85, guide: MONSTER_DATA[randomCategory as keyof typeof MONSTER_DATA] };
       setResult(mockResult);
       saveToCollection(mockResult);
     } finally {
@@ -129,13 +123,13 @@ export default function HomePage() {
               쓰레기를 찍어 몬스터를 찾아봐!
             </p>
           </div>
-          <button 
-            onClick={() => setIsCollectionOpen(true)}
+          <Link 
+            href="/collection"
             className="p-3 bg-white rounded-2xl shadow-md"
             aria-label="도감 보기"
           >
             <span className="text-3xl">📚</span>
-          </button>
+          </Link>
         </header>
 
         <div className="w-full max-w-sm flex-grow flex flex-col">
@@ -172,8 +166,6 @@ export default function HomePage() {
           )}
         </div>
       </main>
-
-      <Collection isOpen={isCollectionOpen} onClose={() => setIsCollectionOpen(false)} />
 
       <style jsx>{`
         .animate-fade-in {

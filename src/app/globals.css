@@ -18,27 +18,30 @@ body {
 
 
 /* 몬스터 캐릭터 애니메이션 */
-@keyframes monster-bounce {
+@keyframes float {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-15px) rotate(-5deg);
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(0) rotate(0deg);
-  }
-  75% {
-    transform: translateY(-10px) rotate(5deg);
+    transform: translateY(-20px);
   }
 }
 
-@keyframes monster-wiggle {
+@keyframes eye-blink {
+  0%, 90%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes wave-arm {
   0%, 100% {
-    transform: rotate(-3deg);
+    transform: rotate(20deg);
   }
   50% {
-    transform: rotate(3deg);
+    transform: rotate(-40deg);
   }
 }
 
@@ -53,29 +56,19 @@ body {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+.animate-eye-blink {
+  animation: eye-blink 3s infinite;
+}
+.animate-wave-arm {
+  animation: wave-arm 1.5s ease-in-out infinite;
 }
 
-.monster-bounce {
-  animation: monster-bounce 2s ease-in-out infinite;
-}
-
-.monster-wiggle {
-  animation: monster-wiggle 0.5s ease-in-out infinite;
-}
 
 .sparkle {
   animation: sparkle 1.5s ease-in-out infinite;
-}
-
-.float {
-  animation: float 3s ease-in-out infinite;
 }
 
 /* 카메라 뷰 스타일 */
