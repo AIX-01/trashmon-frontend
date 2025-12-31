@@ -1,0 +1,159 @@
+/* 글로벌 스타일 - Tailwind CSS 기본 설정 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 기본 폰트 및 배경 설정 */
+:root {
+  --color-paper: #4A90D9;
+  --color-glass: #7CB342;
+  --color-plastic: #FFD54F;
+  --color-can: #EF5350;
+  --color-trash: #78909C;
+}
+
+/* 어두운 테마 배경 */
+body {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 글래스모피즘 카드 스타일 */
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl shadow-2xl;
+  }
+  
+  .btn-primary {
+    @apply px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  }
+  
+  .btn-capture {
+    @apply w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 10px 40px rgba(240, 147, 251, 0.5);
+  }
+}
+
+/* 몬스터 캐릭터 애니메이션 */
+@keyframes monster-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+@keyframes monster-wiggle {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.monster-bounce {
+  animation: monster-bounce 2s ease-in-out infinite;
+}
+
+.monster-wiggle {
+  animation: monster-wiggle 0.5s ease-in-out infinite;
+}
+
+.sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 카메라 뷰 스타일 */
+.camera-view {
+  @apply relative overflow-hidden rounded-3xl;
+  aspect-ratio: 4/3;
+}
+
+.camera-view video {
+  @apply w-full h-full object-cover;
+}
+
+/* 결과 카드 애니메이션 */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+/* 분리수거함 색상 인디케이터 */
+.bin-indicator {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg;
+}
+
+.bin-paper { background-color: var(--color-paper); }
+.bin-glass { background-color: var(--color-glass); }
+.bin-plastic { background-color: var(--color-plastic); }
+.bin-can { background-color: var(--color-can); }
+.bin-trash { background-color: var(--color-trash); }
+
+/* 로딩 스피너 */
+.loading-spinner {
+  @apply w-12 h-12 border-4 border-white/30 border-t-white rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 스크롤바 숨김 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
