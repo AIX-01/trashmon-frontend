@@ -87,11 +87,7 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error('분류 요청 실패:', err);
-      const mockCategories = Object.keys(MONSTER_DATA);
-      const randomCategory = mockCategories[Math.floor(Math.random() * mockCategories.length)];
-      const mockResult = { success: true, category: randomCategory, confidence: 0.85, guide: MONSTER_DATA[randomCategory as keyof typeof MONSTER_DATA] };
-      setResult(mockResult);
-      saveToCollection(mockResult);
+      setError('몬스터를 찾는 데 실패했어요. 서버에 문제가 있나봐요!');
     } finally {
       setIsLoading(false);
     }
