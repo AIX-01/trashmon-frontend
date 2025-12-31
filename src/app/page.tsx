@@ -9,8 +9,9 @@ import { useState, useCallback, useEffect } from 'react';
 import CameraCapture from '@/components/CameraCapture';
 import MonsterCharacter from '@/components/MonsterCharacter';
 import RecyclingGuide from '@/components/RecyclingGuide';
+import Collection, { CollectionData } from '@/components/Collection';
 
-// API 서버 주소 (개발 환경)
+// API 서버 주소
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // 분류 결과 타입
@@ -26,51 +27,38 @@ interface ClassificationResult {
   };
 }
 
-// LocalStorage 키
-const HISTORY_KEY = 'trash-classification-history';
-
-// 분류 기록 타입
-interface HistoryItem {
-  id: string;
-  category: string;
-  timestamp: number;
-}
+// 도감 LocalStorage 키
+const COLLECTION_KEY = 'trash-collection';
 
 export default function HomePage() {
   // 상태 관리
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [error, setError] = useState<string>('');
-  // history 상태는 유지하되, UI에서는 일단 제거하여 단순화
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [isGuideComplete, setIsGuideComplete] = useState(false);
+  const [isCollectionOpen, setIsCollectionOpen] = useState(false);
 
-  // LocalStorage에서 기록 불러오기
-  useEffect(() => {
+  /**
+   * 도감에 새로운 쓰레기 저장
+   */
+  const saveToCollection = useCallback((resultData: ClassificationResult) => {
     try {
-      const saved = localStorage.getItem(HISTORY_KEY);
-      if (saved) {
-        setHistory(JSON.parse(saved));
+      const saved = localStorage.getItem(COLLECTION_KEY);
+      const collection: CollectionData = saved ? JSON.parse(saved) : {};
+      
+      // 이미 수집되지 않은 경우에만 추가
+      if (!collection[resultData.category]) {
+        collection[resultData.category] = {
+          category: resultData.category,
+          monsterColor: resultData.guide.monster_color,
+          timestamp: Date.now(),
+        };
+        localStorage.setItem(COLLECTION_KEY, JSON.stringify(collection));
       }
     } catch (e) {
-      console.error('기록 불러오기 실패:', e);
+      console.error('도감 저장 실패:', e);
     }
   }, []);
-
-  // 기록 저장 로직은 유지
-  const saveToHistory = useCallback((category: string) => {
-    const newItem: HistoryItem = {
-      id: Date.now().toString(),
-      category,
-      timestamp: Date.now(),
-    };
-    const newHistory = [newItem, ...history].slice(0, 10);
-    setHistory(newHistory);
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
-    } catch (e) {
-      console.error('기록 저장 실패:', e);
-    }
-  }, [history]);
 
   /**
    * 이미지 촬영 후 분류 요청
@@ -79,8 +67,8 @@ export default function HomePage() {
     setIsLoading(true);
     setError('');
     setResult(null);
+    setIsGuideComplete(false); // 새로 촬영 시 가이드 완료 상태 초기화
 
-    // --- (API 호출 로직은 기존과 동일) ---
     try {
       const formData = new FormData();
       formData.append('file', imageBlob, 'capture.jpg');
@@ -92,7 +80,7 @@ export default function HomePage() {
       const data: ClassificationResult = await response.json();
       if (data.success) {
         setResult(data);
-        saveToHistory(data.category);
+        saveToCollection(data);
       } else {
         setError('분류에 실패했어요. 다시 시도해주세요!');
       }
@@ -107,64 +95,95 @@ export default function HomePage() {
         '캔': { bin_color: '빨간색', message: '캔은 빨간색 통에 쏙!', tips: ['납작하게 밟아서, 조심해서 버려요.'], monster_color: '#EF5350' },
         '일반쓰레기': { bin_color: '검은색', message: '일반쓰레기는 아무 통에나!', tips: ['재활용이 어려운 친구들이에요.'], monster_color: '#78909C' }
       };
-      setResult({ success: true, category: randomCategory, confidence: 0.85, guide: mockGuides[randomCategory] });
-      saveToHistory(randomCategory);
+      const mockResult = { success: true, category: randomCategory, confidence: 0.85, guide: mockGuides[randomCategory] };
+      setResult(mockResult);
+      saveToCollection(mockResult);
     } finally {
       setIsLoading(false);
     }
-  }, [saveToHistory]);
+  }, [saveToCollection]);
 
   /**
-   * 다시 시작 (결과를 초기화하고 카메라 화면으로 돌아감)
+   * 가이드 완료 처리
+   */
+  const handleGuideComplete = useCallback(() => {
+    setIsGuideComplete(true);
+  }, []);
+
+  /**
+   * 다시 시작 (모든 관련 상태를 초기화)
    */
   const handleReset = useCallback(() => {
     setResult(null);
     setError('');
+    setIsGuideComplete(false);
   }, []);
 
   return (
-    <main className="min-h-screen w-full px-4 pt-12 pb-20 flex flex-col items-center">
-      {/* 단순화된 헤더 */}
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-black text-dark-text">쓰레기 분리배출 교실</h1>
-        <p className="text-md text-dark-text/60 font-medium">
-          궁금한 쓰레기를 카메라로 찍어보세요!
-        </p>
-      </header>
-
-      {/* 메인 컨텐츠 영역 (화면 중앙 정렬) */}
-      <div className="w-full max-w-sm flex-grow flex flex-col">
-        {/*
-          결과(result)가 있으면 결과 컴포넌트를, 없으면 카메라 컴포넌트를 보여줍니다.
-          한 화면에 한 가지 핵심 기능만 보여주어 집중도를 높입니다.
-        */}
-        {result ? (
-          // --- 결과 화면 ---
-          <div className="flex-grow flex flex-col justify-center space-y-4">
-            <MonsterCharacter
-              category={result.category}
-              monsterColor={result.guide.monster_color}
-            />
-            <RecyclingGuide
-              category={result.category}
-              binColor={result.guide.bin_color}
-              message={result.guide.message}
-              tips={result.guide.tips}
-            />
-            <div className="text-center pt-4">
-              <button
-                onClick={handleReset}
-                className="px-8 py-3 bg-brand-green text-white font-bold rounded-full shadow-lg hover:scale-105 transition-transform"
-              >
-                다른 쓰레기 찍기
-              </button>
-            </div>
+    <>
+      <main className="min-h-screen w-full px-4 pt-12 pb-20 flex flex-col items-center">
+        <header className="w-full max-w-sm flex justify-between items-center mb-8">
+          <div className="text-left">
+            <h1 className="text-3xl font-black text-dark-text">쓰레기 교실</h1>
+            <p className="text-md text-dark-text/60 font-medium">
+              쓰레기를 찍어 몬스터를 찾아봐!
+            </p>
           </div>
-        ) : (
-          // --- 카메라 촬영 화면 ---
-          <CameraCapture onCapture={handleCapture} isLoading={isLoading} error={error} onErrorDismiss={handleReset} />
-        )}
-      </div>
-    </main>
+          <button 
+            onClick={() => setIsCollectionOpen(true)}
+            className="p-3 bg-white rounded-2xl shadow-md"
+            aria-label="도감 보기"
+          >
+            <span className="text-3xl">📚</span>
+          </button>
+        </header>
+
+        <div className="w-full max-w-sm flex-grow flex flex-col">
+          {result ? (
+            <div className="flex-grow flex flex-col justify-center space-y-4">
+              <MonsterCharacter
+                category={result.category}
+                monsterColor={result.guide.monster_color}
+              />
+              {isGuideComplete ? (
+                <div className="card p-6 text-center animate-fade-in">
+                  <p className="text-4xl mb-2">🎉</p>
+                  <h2 className="text-2xl font-bold text-dark-text">도감에 등록했어요!</h2>
+                  <p className="text-dark-text/60 mt-1 mb-6">새로운 쓰레기 친구를 찾아볼까요?</p>
+                  <button
+                    onClick={handleReset}
+                    className="w-full px-8 py-3 bg-brand-green text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
+                  >
+                    다른 쓰레기 찍기
+                  </button>
+                </div>
+              ) : (
+                <RecyclingGuide
+                  category={result.category}
+                  binColor={result.guide.bin_color}
+                  message={result.guide.message}
+                  tips={result.guide.tips}
+                  onComplete={handleGuideComplete}
+                />
+              )}
+            </div>
+          ) : (
+            <CameraCapture onCapture={handleCapture} isLoading={isLoading} error={error} onErrorDismiss={handleReset} />
+          )}
+        </div>
+      </main>
+
+      <Collection isOpen={isCollectionOpen} onClose={() => setIsCollectionOpen(false)} />
+
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </>
   );
 }
