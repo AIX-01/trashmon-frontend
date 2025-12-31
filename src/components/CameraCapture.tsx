@@ -12,50 +12,41 @@ interface CameraCaptureProps {
   isLoading: boolean;                      // 분류 중 상태
 }
 
-export default function CameraCapture({ onCapture, isLoading }: CameraCaptureProps) {
+export default function CameraCapture({ onCapture, isLoading, error, onErrorDismiss }: CameraCaptureProps) {
   // 참조 및 상태
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [error, setError] = useState<string>('');
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState<string>('');
 
   /**
    * 카메라 스트림 시작
    */
   const startCamera = useCallback(async () => {
+    // 기존 카메라가 있다면 중지
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    
+    setCameraError('');
     try {
-      // 카메라 권한 요청
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment',  // 후면 카메라 우선
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          facingMode: 'environment',
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
         },
         audio: false,
       });
 
-      // 비디오 요소에 스트림 연결
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         setStream(mediaStream);
-        setIsCameraReady(true);
-        setError('');
       }
     } catch (err) {
       console.error('카메라 시작 실패:', err);
-      setError('카메라를 사용할 수 없어요. 카메라 권한을 허용해주세요! 📸');
-    }
-  }, []);
-
-  /**
-   * 카메라 스트림 중지
-   */
-  const stopCamera = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-      setIsCameraReady(false);
+      setCameraError('카메라를 켤 수 없어요. 권한을 허용했는지 확인해주세요!');
     }
   }, [stream]);
 
@@ -68,109 +59,91 @@ export default function CameraCapture({ onCapture, isLoading }: CameraCapturePro
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-
     if (!context) return;
 
-    // 캔버스 크기를 비디오 크기에 맞춤
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
-    // 비디오 프레임을 캔버스에 그리기
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // 캔버스를 Blob으로 변환
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          onCapture(blob);
-        }
-      },
-      'image/jpeg',
-      0.9  // JPEG 품질
-    );
+    canvas.toBlob((blob) => {
+      if (blob) onCapture(blob);
+    }, 'image/jpeg', 0.9);
   }, [onCapture, isLoading]);
 
-  // 컴포넌트 마운트 시 카메라 시작
+  // 컴포넌트 마운트/언마운트 시 카메라 관리
   useEffect(() => {
     startCamera();
-    return () => stopCamera();
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
   return (
-    <div className="relative">
+    <div className="w-full flex-grow flex flex-col items-center">
       {/* 카메라 뷰 영역 */}
-      <div className="camera-view glass-card overflow-hidden">
-        {/* 비디오 스트림 */}
+      <div className="w-full aspect-[9/16] rounded-4xl overflow-hidden shadow-lg relative bg-brand-yellow-subtle flex items-center justify-center">
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-300 ${isCameraReady ? 'opacity-100' : 'opacity-0'}`}
           onCanPlay={() => setIsCameraReady(true)}
         />
 
-        {/* 카메라 오버레이 가이드 */}
-        {isCameraReady && !isLoading && (
-          <div className="absolute inset-0 pointer-events-none">
-            {/* 중앙 가이드 프레임 */}
-            <div className="absolute inset-8 border-4 border-dashed border-white/40 rounded-3xl" />
-            {/* 코너 강조 */}
-            <div className="absolute top-6 left-6 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
-            <div className="absolute top-6 right-6 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
-            <div className="absolute bottom-6 left-6 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
-            <div className="absolute bottom-6 right-6 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
-          </div>
-        )}
-
         {/* 로딩 오버레이 */}
         {isLoading && (
-          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-            <div className="loading-spinner mb-4" />
-            <p className="text-white text-lg font-bold">분석 중... 🔍</p>
+          <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center backdrop-blur-sm z-10">
+            <p className="text-3xl animate-bounce">♻️</p>
+            <p className="text-dark-text text-lg font-bold mt-2">쓰레기 친구를 분석하고 있어요!</p>
           </div>
         )}
 
-        {/* 에러 메시지 */}
-        {error && (
-          <div className="absolute inset-0 bg-black/70 flex items-center justify-center p-8">
-            <div className="text-center">
-              <p className="text-5xl mb-4">📷</p>
-              <p className="text-white text-lg">{error}</p>
-              <button
-                onClick={startCamera}
-                className="mt-4 px-6 py-3 bg-white/20 rounded-full text-white font-bold hover:bg-white/30 transition-colors"
-              >
-                다시 시도
-              </button>
-            </div>
+        {/* 카메라 에러 */}
+        {cameraError && !isLoading && (
+           <div className="absolute inset-0 bg-brand-yellow-light flex flex-col items-center justify-center text-center p-4">
+            <p className="text-4xl mb-4">😭</p>
+            <p className="font-bold text-dark-text">{cameraError}</p>
+            <button
+              onClick={startCamera}
+              className="mt-4 px-6 py-2 bg-brand-green text-white font-bold rounded-full"
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+
+        {/* API 에러 */}
+        {error && !isLoading && (
+          <div className="absolute inset-0 bg-brand-yellow-light flex flex-col items-center justify-center text-center p-4">
+            <p className="text-4xl mb-4">😵</p>
+            <p className="font-bold text-dark-text">{error}</p>
+            <button
+              onClick={onErrorDismiss}
+              className="mt-4 px-6 py-2 bg-brand-green text-white font-bold rounded-full"
+            >
+              알겠어요
+            </button>
           </div>
         )}
       </div>
 
-      {/* 숨겨진 캔버스 (촬영용) */}
+      {/* 숨겨진 캔버스 */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* 촬영 버튼 */}
-      <div className="flex justify-center mt-6">
+      {/* 촬영 버튼 영역 */}
+      <div className="w-full flex-grow flex items-center justify-center">
         <button
           onClick={capturePhoto}
-          disabled={!isCameraReady || isLoading}
-          className={`btn-capture ${
-            !isCameraReady || isLoading
-              ? 'opacity-50 cursor-not-allowed'
-              : 'hover:shadow-2xl'
-          }`}
+          disabled={!isCameraReady || isLoading || !!cameraError || !!error}
+          className="w-24 h-24 rounded-full bg-brand-green text-white flex items-center justify-center text-5xl shadow-2xl transform transition-transform active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
           aria-label="사진 촬영"
         >
-          <span className="text-4xl">📸</span>
+          ♻️
         </button>
       </div>
-
-      {/* 안내 문구 */}
-      <p className="text-center text-white/70 mt-4 text-sm">
-        쓰레기를 화면 중앙에 맞추고 버튼을 눌러주세요!
-      </p>
     </div>
   );
 }

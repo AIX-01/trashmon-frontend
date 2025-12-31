@@ -36,91 +36,55 @@ export default function RecyclingGuide({
   binColor,
   message,
   tips,
-  isVisible,
 }: RecyclingGuideProps) {
-  if (!isVisible) return null;
-
-  const icon = CATEGORY_ICONS[category] || '♻️';
   const binColorClass = BIN_COLORS_KR[binColor] || 'bg-gray-500';
 
   return (
-    <div className="result-card space-y-6 mt-6">
-      {/* 분류 결과 헤더 */}
-      <div className="glass-card p-6 text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <span className="text-4xl">{icon}</span>
-          <h2 className="text-2xl font-black text-white">{category}</h2>
-          <span className="text-4xl">{icon}</span>
-        </div>
-        
-        {/* 안내 메시지 */}
-        <p className="text-xl text-white/90 font-bold">{message}</p>
-      </div>
+    // 전체를 감싸는 새로운 통합 카드
+    <div className="card p-6 pt-16 text-center">
+      {/* 1. 결과 발표 */}
+      <h2 className="text-3xl font-black text-dark-text mb-1">
+        이 친구는 <span className="text-brand-blue">{category}!</span>
+      </h2>
+      <p className="text-lg font-bold text-dark-text/70 mb-6">{message}</p>
 
-      {/* 분리수거함 안내 */}
-      <div className="glass-card p-6">
-        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <span>🎯</span>
-          어디에 버릴까요?
+      {/* 구분선 */}
+      <hr className="w-1/2 mx-auto border-t-2 border-brand-yellow-subtle my-6" />
+      
+      {/* 2. 버리는 곳 안내 */}
+      <div className="text-left">
+        <h3 className="text-xl font-bold text-dark-text mb-3 flex items-center gap-2">
+          <span className="text-3xl">👉</span>
+          어디에 버릴까?
         </h3>
-        
-        <div className="flex items-center gap-4">
-          {/* 분리수거함 아이콘 */}
-          <div className={`bin-indicator ${binColorClass} text-white`}>
-            <span className="text-2xl">🗑️</span>
+        <div className="flex items-center gap-4 p-4 bg-brand-yellow-light rounded-2xl">
+          <div className={`w-16 h-16 rounded-xl flex items-center justify-center text-white text-4xl ${binColorClass}`}>
+            🗑️
           </div>
-          
           <div>
-            <p className="text-white font-bold text-lg">
-              {binColor} 분리수거함
-            </p>
-            <p className="text-white/70 text-sm">
-              {category} 전용 수거함에 넣어주세요!
-            </p>
+            <p className="font-bold text-lg text-dark-text">{binColor} 분리수거함</p>
+            <p className="text-dark-text/70 font-medium">{category}를 여기에 쏙!</p>
           </div>
         </div>
       </div>
 
-      {/* 분리수거 팁 */}
-      <div className="glass-card p-6">
-        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <span>💡</span>
-          분리수거 꿀팁!
+      {/* 구분선 */}
+      <hr className="w-1/2 mx-auto border-t-2 border-brand-yellow-subtle my-6" />
+
+      {/* 3. 버리는 법 (꿀팁) */}
+      <div className="text-left">
+        <h3 className="text-xl font-bold text-dark-text mb-4 flex items-center gap-2">
+          <span className="text-3xl">💡</span>
+          어떻게 버릴까?
         </h3>
-        
         <ul className="space-y-3">
           {tips.map((tip, index) => (
-            <li
-              key={index}
-              className="flex items-start gap-3 text-white/90"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <span className="text-xl mt-0.5">
-                {index === 0 ? '1️⃣' : index === 1 ? '2️⃣' : '3️⃣'}
-              </span>
-              <span className="font-medium">{tip}</span>
+            <li key={index} className="flex items-start gap-3">
+              <span className="text-xl pt-0.5">✔️</span>
+              <span className="font-medium text-md text-dark-text/80">{tip}</span>
             </li>
           ))}
         </ul>
-      </div>
-
-      {/* 격려 메시지 */}
-      <div className="text-center py-4">
-        <p className="text-2xl mb-2">🌟 잘했어요! 🌟</p>
-        <p className="text-white/80 font-medium">
-          분리수거를 잘 하면 지구가 깨끗해져요! 🌍
-        </p>
-      </div>
-
-      {/* 다시 촬영 버튼 */}
-      <div className="flex justify-center">
-        <button
-          onClick={() => window.location.reload()}
-          className="btn-primary"
-        >
-          <span className="mr-2">📸</span>
-          다시 촬영하기
-        </button>
       </div>
     </div>
   );

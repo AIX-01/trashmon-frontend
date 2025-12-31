@@ -1,3 +1,5 @@
+const { fontFamily } = require('tailwindcss/defaultTheme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -7,35 +9,38 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // 어린이 친화적인 색상 팔레트
+      // UI/UX 디자이너가 재정의한 색상 팔레트
       colors: {
-        paper: '#4A90D9',      // 종이 - 파란색
-        glass: '#7CB342',      // 유리 - 초록색
-        plastic: '#FFD54F',    // 플라스틱 - 노란색
-        can: '#EF5350',        // 캔 - 빨간색
-        trash: '#78909C',      // 일반쓰레기 - 회색
+        'brand-yellow': {
+          light: '#FFFBEB', // 부드러운 메인 배경색
+          DEFAULT: '#FFD900', // 기존 브랜드 색상 (필요시 사용)
+          subtle: '#FFF1B8', // 연한 노란색
+        },
+        'brand-green': '#2DB400',  // 핵심 포인트 컬러
+        'brand-blue': '#0077FF',   // 보조 포인트 컬러
+        'dark-text': '#2C2C2C',     // 기본 텍스트 색상
       },
-      // 귀여운 애니메이션
+      fontFamily: {
+        sans: ['"Noto Sans KR"', ...fontFamily.sans],
+      },
       animation: {
-        'bounce-slow': 'bounce 2s infinite',
-        'wiggle': 'wiggle 1s ease-in-out infinite',
-        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 3s ease-in-out infinite',
+        'bounce-slow': 'bounce 2.5s infinite',
+        'wiggle': 'wiggle 1.5s ease-in-out infinite',
+        'float': 'float 3.5s ease-in-out infinite',
       },
       keyframes: {
         wiggle: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' },
+          '0%, 100%': { transform: 'rotate(-2deg)' },
+          '50%': { transform: 'rotate(2deg)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
       },
-      // 둥근 모서리 (어린이 친화적)
       borderRadius: {
-        'blob': '60% 40% 30% 70% / 60% 30% 70% 40%',
-      },
+        '4xl': '2rem',
+      }
     },
   },
   plugins: [],
