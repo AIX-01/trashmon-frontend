@@ -54,9 +54,6 @@ export default function LandingPage() {
             <a href="#features" className="hover:text-green-600 transition-colors">주요 기능</a>
             <a href="#education" className="hover:text-green-600 transition-colors">교육 효과</a>
             <a href="#reviews" className="hover:text-green-600 transition-colors">후기</a>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg flex items-center gap-2">
-              시작하기 <Download size={18} />
-            </button>
           </div>
 
           {/* 모바일 메뉴 버튼 */}
@@ -71,9 +68,9 @@ export default function LandingPage() {
             <a href="#features" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">주요 기능</a>
             <a href="#education" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">교육 효과</a>
             <a href="#reviews" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">후기</a>
-            <button className="bg-orange-500 text-white w-full py-3 rounded-xl font-bold mt-2">
-              게임 시작하기
-            </button>
+            <Link href="/app" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+              무료로 시작하기 <ChevronRight />
+            </Link>
           </div>
         )}
       </nav>
@@ -98,7 +95,7 @@ export default function LandingPage() {
               <span className="font-bold text-green-700">분리수거 대모험</span>으로 시작하세요.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Link href="/" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+              <Link href="/app" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
                 무료로 시작하기 <ChevronRight />
               </Link>
               <a href="https://sora.chatgpt.com/p/s_69579d44588c8191986dc05bb9ec1f9e?psh=HXVzZXItYVh4dHpLS0t1WnNsc0JkdkFmSnlaemRx.nDd2ma-KjU8Y" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-gray-50 text-gray-700 text-lg px-8 py-4 rounded-2xl font-bold shadow-md border border-gray-200 transition-all flex items-center justify-center gap-2">
@@ -297,9 +294,9 @@ export default function LandingPage() {
             환경을 생각하는 마음이 무럭무럭 자라납니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-green-700 font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-lg">
-              <Download size={20} /> 시작하기
-            </button>
+            <Link href="/app" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+              무료로 시작하기 <ChevronRight />
+            </Link>
           </div>
         </div>
       </section>
