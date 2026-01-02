@@ -1,0 +1,131 @@
+/* 글로벌 스타일 - Tailwind CSS 기본 설정 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: theme('colors.brand-yellow.light');
+  color: theme('colors.dark-text');
+  overflow-x: hidden;
+}
+
+@layer components {
+  /* 모든 컴포넌트의 기반이 될 새로운 카드 스타일 */
+  .card {
+    @apply w-full bg-white rounded-4xl shadow-lg;
+  }
+}
+
+
+/* 몬스터 캐릭터 애니메이션 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes eye-blink {
+  0%, 90%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes wave-arm {
+  0%, 100% {
+    transform: rotate(20deg);
+  }
+  50% {
+    transform: rotate(-40deg);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+.animate-eye-blink {
+  animation: eye-blink 3s infinite;
+}
+.animate-wave-arm {
+  animation: wave-arm 1.5s ease-in-out infinite;
+}
+
+
+.sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* 카메라 뷰 스타일 */
+.camera-view {
+  @apply relative overflow-hidden rounded-3xl;
+  aspect-ratio: 4/3;
+}
+
+.camera-view video {
+  @apply w-full h-full object-cover;
+}
+
+/* 결과 카드 애니메이션 */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+/* 분리수거함 색상 인디케이터 */
+.bin-indicator {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg;
+}
+
+.bin-paper { background-color: var(--color-paper); }
+.bin-glass { background-color: var(--color-glass); }
+.bin-plastic { background-color: var(--color-plastic); }
+.bin-can { background-color: var(--color-can); }
+.bin-trash { background-color: var(--color-trash); }
+
+/* 로딩 스피너 */
+.loading-spinner {
+  @apply w-12 h-12 border-4 border-white/30 border-t-white rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 스크롤바 숨김 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
