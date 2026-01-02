@@ -3,13 +3,13 @@ import './globals.css';
 
 // PWA 메타데이터 설정
 export const metadata: Metadata = {
-  title: '쓰레기 분류 교실 🌍',
-  description: '쓰레기를 촬영하면 AI가 분류하고 분리수거 방법을 알려주는 어린이 교육 앱',
+  title: '트래시몬 - TRASHMON 🎮',
+  description: '쓰레기 몬스터를 잡아라! 카메라로 쓰레기를 찍으면 몬스터가 나타나는 신나는 어린이 분리수거 게임',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: '분류교실',
+    title: '트래시몬',
   },
   formatDetection: {
     telephone: false,
@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#4A90D9',
+  themeColor: '#10b981',
 };
 
 export default function RootLayout({

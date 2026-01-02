@@ -1,11 +1,11 @@
 {
-  "name": "쓰레기 분류 교실",
-  "short_name": "분류교실",
-  "description": "쓰레기를 촬영하면 AI가 분류하고 분리수거 방법을 알려주는 어린이 교육 앱",
+  "name": "트래시몬 - TRASHMON",
+  "short_name": "트래시몬",
+  "description": "쓰레기 몬스터를 잡아라! 카메라로 쓰레기를 찍으면 몬스터가 나타나는 신나는 어린이 분리수거 게임",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#4A90D9",
+  "background_color": "#fef3c7",
+  "theme_color": "#10b981",
   "orientation": "portrait",
   "icons": [
     {
