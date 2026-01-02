@@ -1,0 +1,96 @@
+/* src/app/collection/HoloCard.css */
+
+.holo-card-container {
+  perspective: 1000px;
+  width: 300px; /* Adjust as needed */
+  height: 420px; /* Aspect ratio roughly 2.5/3.5 */
+  cursor: pointer;
+}
+
+.holo-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.holo-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.holo-card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.holo-card-front {
+  background-color: #1a1a1a;
+  /* Holo effect layers will go here */
+}
+
+.holo-card-back {
+  background-color: #f0f0f0;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+/* 
+   Using the specific assets requested by the user 
+   Note: We are not implementing the complex mouse-tracking holograms 
+   as per the request to "remove tilt on hover", 
+   but we can keep a static shimmer or basic foil background for the front.
+*/
+
+.card__front {
+  /* Using variables for potential future animation or static setup */
+  --mask: url(https://poke-holo.b-cdn.net/foils/swsh12pt5/masks/upscaled/160_foil_etched_swsecret_2x.webp);
+  --foil: url(https://poke-holo.b-cdn.net/foils/swsh12pt5/foils/upscaled/160_foil_etched_swsecret_2x.webp);
+  
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Background/Base image */
+.card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+/* Shine/Glare effects can be simplified or static */
+.card__shine {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    linear-gradient(
+      105deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.2) 25%,
+      transparent 30%
+    );
+  z-index: 2;
+  pointer-events: none;
+  background-size: 200% 200%;
+  /* Optional: Gentle infinite shine animation */
+  animation: shine 4s infinite linear;
+}
+
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

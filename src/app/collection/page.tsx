@@ -1,202 +1,64 @@
 // src/app/collection/page.tsx
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CollectionData } from '@/types';
-import { MONSTER_DATA } from '@/lib/monsters';
-import MonsterCharacter from '@/components/MonsterCharacter';
-import PokedexModal from '@/components/PokedexModal'; // PokedexModal 임포트
+import HoloCard from './HoloCard';
 
 const COLLECTION_KEY = 'trash-collection';
 
 // 1. Character Model
-interface Character {
-  id: string;
-  category: string;
-  monsterColor: string;
-  x: number;
-  y: number;
-  speed: number;
-  targetX: number;
-  targetY: number;
-}
+// Character Model removed
 
-// Custom hook for game loop
-const useGameLoop = (callback: (deltaTime: number) => void) => {
-  const requestRef = useRef<number>();
-  const previousTimeRef = useRef<number>();
-
-  const loop = useCallback((time: number) => {
-    if (previousTimeRef.current !== undefined) {
-      const deltaTime = time - previousTimeRef.current;
-      callback(deltaTime);
-    }
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(loop);
-  }, [callback]);
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(loop);
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [loop]);
-};
-
-// Character Component
-const CharacterComponent: React.FC<{ character: Character }> = ({ character }) => {
-  return (
-    <div
-      className="absolute transition-transform duration-1000 ease-linear"
-      style={{
-        left: `${character.x}px`,
-        top: `${character.y}px`,
-        width: '100px',
-        height: '100px',
-      }}
-    >
-      <MonsterCharacter category={character.category} monsterColor={character.monsterColor} />
-    </div>
-  );
-};
 
 
 // Farm Component
 const FarmPage = () => {
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
-  const [isPokedexOpen, setIsPokedexOpen] = useState(false); // Pokedex Modal 상태
-  const [collectionData, setCollectionData] = useState<CollectionData>({}); // 도감 데이터
-  const farmRef = useRef<HTMLDivElement>(null);
+  const [collectionData, setCollectionData] = useState<CollectionData>({});
 
-  // 2. Unlock Flow (Initialize characters from localStorage)
   useEffect(() => {
     const saved: CollectionData = JSON.parse(localStorage.getItem(COLLECTION_KEY) || '{}');
-    setCollectionData(saved); // 도감 데이터 설정
-    const farmBounds = farmRef.current?.getBoundingClientRect();
-
-    const initialCharacters: Character[] = Object.values(saved).map(item => ({
-      id: item.category,
-      category: item.category,
-      monsterColor: item.monsterColor,
-      x: farmBounds ? Math.random() * (farmBounds.width - 100) : 300,
-      y: farmBounds ? Math.random() * (farmBounds.height - 100) : 300,
-      speed: 0.05 + Math.random() * 0.05,
-      targetX: farmBounds ? Math.random() * (farmBounds.width - 100) : 300,
-      targetY: farmBounds ? Math.random() * (farmBounds.height - 100) : 300,
-    }));
-    setCharacters(initialCharacters);
+    setCollectionData(saved);
   }, []);
 
-  // 3. Autonomous Movement & 4. Interaction
-  const updateCharacters = useCallback((deltaTime: number) => {
-    const farmBounds = farmRef.current?.getBoundingClientRect();
-    if (!farmBounds) return;
-
-    setCharacters(prevChars =>
-      prevChars.map(char => {
-        const dx = char.targetX - char.x;
-        const dy = char.targetY - char.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        let newX = char.x;
-        let newY = char.y;
-
-        if (distance > 1) {
-          newX += (dx / distance) * char.speed * deltaTime;
-          newY += (dy / distance) * char.speed * deltaTime;
-        } else {
-          // New random target when reached
-           if (char.id !== selectedCharacterId) {
-             return {
-                ...char,
-                targetX: Math.random() * (farmBounds.width - 100),
-                targetY: Math.random() * (farmBounds.height - 100),
-             }
-           }
-        }
-        
-        // 3. Stay within farm boundaries
-        newX = Math.max(0, Math.min(newX, farmBounds.width - 100));
-        newY = Math.max(0, Math.min(newY, farmBounds.height - 100));
-
-        return { ...char, x: newX, y: newY };
-      })
-    );
-  }, [selectedCharacterId]);
-
-  useGameLoop(updateCharacters);
-  
-  // 4. Interaction
-  const handleFarmClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (selectedCharacterId && farmRef.current) {
-      const farmBounds = farmRef.current.getBoundingClientRect();
-      const newTargetX = e.clientX - farmBounds.left - 50; // Center of character
-      const newTargetY = e.clientY - farmBounds.top - 50;
-
-      setCharacters(chars =>
-        chars.map(c =>
-          c.id === selectedCharacterId ? { ...c, targetX: newTargetX, targetY: newTargetY } : c
-        )
-      );
-      setSelectedCharacterId(null); // Deselect after setting target
-    }
-  };
-
-  const handleCharacterClick = (id: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      setSelectedCharacterId(id);
-  }
-
+  const characters = Object.values(collectionData);
 
   return (
-    // 5. Visual Feel
-    <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-b from-sky-300 to-sky-100">
-        {/* Navigation Buttons */}
-        <div className="absolute top-4 left-4 z-20 flex gap-2">
-            <Link href="/" className="bg-yellow-400 text-white p-3 rounded-full shadow-lg hover:bg-yellow-500 transition">
-                🏠
+    <div className="min-h-screen bg-neutral-900 p-8 overflow-y-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8 max-w-7xl mx-auto">
+         <div className="flex items-center gap-4">
+            <Link href="/" className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-full transition shadow-lg">
+               🏠
             </Link>
-            <button
-                onClick={() => setIsPokedexOpen(true)}
-                className="bg-purple-500 text-white p-3 rounded-full shadow-lg hover:bg-purple-600 transition"
-                aria-label="도감 보기"
-            >
-                📚
-            </button>
-        </div>
-      
-      {/* Farm Area */}
-      <div 
-        ref={farmRef} 
-        className="relative w-full h-full"
-        onClick={handleFarmClick}
-      >
-        {/* Grass */}
-        <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-green-600 to-green-400" />
-        
-        {characters.map(char => (
-          <div key={char.id} onClick={(e) => handleCharacterClick(char.id, e)}>
-            <CharacterComponent character={char} />
-          </div>
-        ))}
-
-        {characters.length === 0 && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/80 p-8 rounded-2xl shadow-xl text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">팜이 비어있어요!</h2>
-                <p className="text-gray-600">쓰레기를 촬영하고 몬스터를 수집해보세요.</p>
-            </div>
-        )}
+            <h1 className="text-4xl font-bold text-white tracking-wider">MY COLLECTION</h1>
+         </div>
+         <div className="text-gray-400">
+            Total: {characters.length}
+         </div>
       </div>
-      
-      <PokedexModal
-        isOpen={isPokedexOpen}
-        onClose={() => setIsPokedexOpen(false)}
-        collection={collectionData}
-      />
+
+      {/* Grid Area */}
+      {characters.length === 0 ? (
+         <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500">
+            <div className="text-6xl mb-4">📭</div>
+            <p className="text-xl">No monsters collected yet.</p>
+            <Link href="/" className="mt-4 text-yellow-400 hover:underline">Go catch some!</Link>
+         </div>
+      ) : (
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
+            {characters.map((char) => (
+               <HoloCard 
+                  key={char.category} 
+                  id={char.category}
+                  category={char.category} 
+                  monsterColor={char.monsterColor} 
+                  // Using partial actual data, fallback to defaults for unused fields
+               />
+            ))}
+         </div>
+      )}
     </div>
   );
 };
