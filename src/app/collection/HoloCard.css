@@ -19,6 +19,11 @@
   transform: rotateY(180deg);
 }
 
+/* 뒤집혔을 때 앞면 숨기기 */
+.holo-card.flipped .holo-card-front {
+  visibility: hidden;
+}
+
 .holo-card-face {
   position: absolute;
   width: 100%;
@@ -32,7 +37,7 @@
 
 .holo-card-front {
   background-color: #1a1a1a;
-  /* Holo effect layers will go here */
+  z-index: 2;
 }
 
 .holo-card-back {
@@ -41,6 +46,7 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  z-index: 1;
 }
 
 /* 

@@ -3,46 +3,66 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CollectionData } from '@/types';
+import { CollectionItem } from '@/types';
+import { getAllCollection, createImageUrl, seedDummyData } from '@/lib/collectionStorage';
 import HoloCard from './HoloCard';
 
-const COLLECTION_KEY = 'trash-collection';
-
-// 1. Character Model
-// Character Model removed
-
-
-
-const DUMMY_DATA = [
-  // Common
-  { id: '1', category: 'plastic', monsterColor: '#60A5FA', date: '2024-01-15', rank: 'A' },
-  { id: '2', category: 'can', monsterColor: '#F87171', date: '2024-01-20', rank: 'B' },
-  { id: '3', category: 'paper', monsterColor: '#FBBF24', date: '2024-02-01', rank: 'S' },
-  { id: '4', category: 'glass', monsterColor: '#34D399', date: '2024-02-10', rank: 'A' },
-  { id: '5', category: 'vinyl', monsterColor: '#A78BFA', date: '2024-02-15', rank: 'B' },
-  // Rare / Special
-  { id: '6', category: 'battery', monsterColor: '#EF4444', date: '2024-02-20', rank: 'SS' },
-  { id: '7', category: 'clothing', monsterColor: '#EC4899', date: '2024-02-22', rank: 'A' },
-  { id: '8', category: 'metal', monsterColor: '#9CA3AF', date: '2024-02-25', rank: 'B' },
-  { id: '9', category: 'oil', monsterColor: '#1F2937', date: '2024-02-28', rank: 'S' },
-  { id: '10', category: 'lightbulb', monsterColor: '#FEF3C7', date: '2024-03-01', rank: 'A' },
-  { id: '11', category: 'food', monsterColor: '#10B981', date: '2024-03-05', rank: 'C' },
-  { id: '12', category: 'trash', monsterColor: '#6B7280', date: '2024-03-10', rank: 'D' },
-];
+// 이미지 URL이 포함된 캐릭터 타입
+interface CharacterWithUrl {
+  id: number;
+  category: string;
+  monsterName: string;
+  imageUrl: string;
+  date: string;
+  rank: string;
+}
 
 // Farm Component
 const FarmPage = () => {
-  const [collectionData, setCollectionData] = useState<CollectionData>({});
+  const [characters, setCharacters] = useState<CharacterWithUrl[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load real data
-    const saved: CollectionData = JSON.parse(localStorage.getItem(COLLECTION_KEY) || '{}');
-    setCollectionData(saved);
+    const loadCollection = async () => {
+      try {
+        // 도감이 비어있으면 더미 데이터 추가
+        await seedDummyData();
+
+        const items = await getAllCollection();
+
+        // Blob을 URL로 변환하여 캐릭터 목록 생성
+        const charactersWithUrls: CharacterWithUrl[] = items.map(item => ({
+          id: item.id!,
+          category: item.category,
+          monsterName: item.monsterName,
+          imageUrl: createImageUrl(item.monsterImage),
+          date: item.capturedAt.toLocaleDateString(),
+          rank: 'B', // 기본 랭크
+        }));
+
+        setCharacters(charactersWithUrls);
+      } catch (e) {
+        console.error('도감 로드 실패:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCollection();
+
+    // 컴포넌트 언마운트 시 URL 해제
+    return () => {
+      characters.forEach(char => URL.revokeObjectURL(char.imageUrl));
+    };
   }, []);
 
-  // Merge real data with dummy data for visualization purposes
-  const realCharacters = Object.values(collectionData);
-  const characters = [...realCharacters, ...DUMMY_DATA];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+        <p className="text-white text-xl">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-900 p-8 overflow-y-auto">
@@ -64,25 +84,21 @@ const FarmPage = () => {
          <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500">
             <div className="text-6xl mb-4">📭</div>
             <p className="text-xl">No monsters collected yet.</p>
-            <Link href="/" className="mt-4 text-yellow-400 hover:underline">Go catch some!</Link>
+            <Link href="/camera" className="mt-4 text-yellow-400 hover:underline">Go catch some!</Link>
          </div>
       ) : (
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
-            {characters.map((char: any) => {
-               // Convert timestamp to date string if needed
-               const formattedDate = char.date || (char.timestamp ? new Date(char.timestamp).toLocaleDateString() : 'Unknown Date');
-               
-               return (
-               <HoloCard 
-                  key={char.id || char.category} 
-                  id={char.id || char.category}
-                  category={char.category} 
-                  monsterColor={char.monsterColor}
-                  date={formattedDate}
-                  rank={char.rank || 'B'} // Default rank if missing
+            {characters.map((char) => (
+               <HoloCard
+                  key={char.id}
+                  id={String(char.id)}
+                  category={char.category}
+                  monsterName={char.monsterName}
+                  imageUrl={char.imageUrl}
+                  date={char.date}
+                  rank={char.rank}
                />
-               );
-            })}
+            ))}
          </div>
       )}
     </div>
