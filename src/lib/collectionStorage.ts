@@ -1,4 +1,4 @@
-import { CollectionItem, ClassificationResult } from '@/types';
+import { CollectionItem, ClassificationResult, MonsterRank } from '@/types';
 import { db } from './db';
 import { generateRandomRank } from './monsters';
 
@@ -23,11 +23,11 @@ function base64ToBlob(base64: string, mimeType: string = 'image/png'): Blob {
  */
 export async function saveToCollection(
   resultData: ClassificationResult,
-  monsterName: string
+  monsterName: string,
+  rank: MonsterRank
 ): Promise<void> {
   try {
     const imageBlob = base64ToBlob(resultData.monster_image);
-    const rank = generateRandomRank();
 
     await db.collection.add({
       category: resultData.category,

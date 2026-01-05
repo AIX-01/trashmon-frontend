@@ -13,12 +13,14 @@ export default function CameraPage() {
     capturedImage,
     result,
     monsterName,
+    monsterRank,
     currentTipIndex,
     error,
     handleCapture,
     handleNameChange,
     handleNameSubmit,
     handleNextTip,
+    handleRelease,
     handleCaptureAgain,
     handleGoToCollection,
     handleErrorDismiss,
@@ -40,6 +42,7 @@ export default function CameraPage() {
         category={result?.category || ''}
         monsterImage={result?.monster_image || ''}
         monsterName={monsterName}
+        monsterRank={monsterRank}
         tips={result?.guide.tips || []}
         binColor={result?.guide.bin_color || ''}
         message={result?.guide.message || ''}
@@ -48,6 +51,7 @@ export default function CameraPage() {
         onNameChange={handleNameChange}
         onNameSubmit={handleNameSubmit}
         onNextTip={handleNextTip}
+        onRelease={handleRelease}
         onGoToCollection={handleGoToCollection}
         onCaptureAgain={handleCaptureAgain}
       />

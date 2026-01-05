@@ -1,10 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { MonsterRank } from '@/types';
 
 type ModalStep = 'loading' | 'naming' | 'guide' | 'complete' | 'error';
+
+// 랭크별 색상
+const RANK_COLORS: Record<MonsterRank, string> = {
+  S: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white',
+  A: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
+  B: 'bg-gradient-to-r from-blue-400 to-blue-500 text-white',
+  C: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
+};
 
 interface CaptureModalProps {
   isOpen: boolean;
@@ -14,6 +22,7 @@ interface CaptureModalProps {
   category: string;
   monsterImage: string;
   monsterName: string;
+  monsterRank: MonsterRank;
   tips: string[];
   binColor: string;
   message: string;
@@ -22,6 +31,7 @@ interface CaptureModalProps {
   onNameChange: (name: string) => void;
   onNameSubmit: () => void;
   onNextTip: () => void;
+  onRelease: () => void;
   onGoToCollection: () => void;
   onCaptureAgain: () => void;
 }
@@ -34,6 +44,7 @@ export default function CaptureModal({
   category,
   monsterImage,
   monsterName,
+  monsterRank,
   tips,
   binColor,
   message,
@@ -42,6 +53,7 @@ export default function CaptureModal({
   onNameChange,
   onNameSubmit,
   onNextTip,
+  onRelease,
   onGoToCollection,
   onCaptureAgain,
 }: CaptureModalProps) {
@@ -85,9 +97,13 @@ export default function CaptureModal({
         {/* 이름 입력 단계 */}
         {step === 'naming' && (
           <div className="p-6 flex flex-col items-center">
-            <div className="text-center mb-4">
+            {/* 카테고리와 랭크 */}
+            <div className="flex items-center gap-2 mb-4">
               <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
                 {category}
+              </span>
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${RANK_COLORS[monsterRank]}`}>
+                {monsterRank} Rank
               </span>
             </div>
 
@@ -113,12 +129,20 @@ export default function CaptureModal({
               maxLength={10}
             />
 
-            <button
-              onClick={onNameSubmit}
-              className="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 rounded-2xl shadow-lg transition-all"
-            >
-              이름 정하기
-            </button>
+            <div className="w-full space-y-3">
+              <button
+                onClick={onNameSubmit}
+                className="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 rounded-2xl shadow-lg transition-all"
+              >
+                이름 정하기
+              </button>
+              <button
+                onClick={onRelease}
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-600 text-lg font-bold py-3 rounded-2xl transition-all"
+              >
+                놓아주기 🌿
+              </button>
+            </div>
           </div>
         )}
 

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { ApiResponse, ClassificationResult } from '@/types';
+import { ApiResponse, ClassificationResult, MonsterRank } from '@/types';
 import { saveToCollection } from '@/lib/collectionStorage';
-import { getGuideByCategory } from '@/lib/monsters';
+import { getGuideByCategory, generateRandomRank } from '@/lib/monsters';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -28,6 +28,7 @@ export function useClassification() {
   // 결과 데이터
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [monsterName, setMonsterName] = useState('');
+  const [monsterRank, setMonsterRank] = useState<MonsterRank>('C');
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   // 에러
@@ -91,7 +92,8 @@ export function useClassification() {
       };
 
       setResult(classificationResult);
-      setMonsterName(`${apiData.category}몬`); // 기본 이름
+      setMonsterName(`${apiData.category}몬`);
+      setMonsterRank(generateRandomRank());
       setModalStep('naming');
     } catch (err) {
       console.error('분류 요청 실패:', err);
@@ -120,10 +122,21 @@ export function useClassification() {
       setCurrentTipIndex(prev => prev + 1);
     } else {
       // 모든 팁을 봤으면 저장 후 완료 단계로
-      await saveToCollection(result, monsterName);
+      await saveToCollection(result, monsterName, monsterRank);
       setModalStep('complete');
     }
-  }, [result, currentTipIndex, monsterName]);
+  }, [result, currentTipIndex, monsterName, monsterRank]);
+
+  // 놓아주기 (저장하지 않고 다시 촬영)
+  const handleRelease = useCallback(() => {
+    setIsModalOpen(false);
+    setResult(null);
+    setMonsterName('');
+    setMonsterRank('C');
+    setCurrentTipIndex(0);
+    setModalStep('loading');
+    setShouldRestartCamera(true);
+  }, []);
 
   // 다시 포획하기
   const handleCaptureAgain = useCallback(() => {
@@ -157,6 +170,7 @@ export function useClassification() {
     // 데이터
     result,
     monsterName,
+    monsterRank,
     currentTipIndex,
     error,
 
@@ -165,6 +179,7 @@ export function useClassification() {
     handleNameChange,
     handleNameSubmit,
     handleNextTip,
+    handleRelease,
     handleCaptureAgain,
     handleGoToCollection,
     handleErrorDismiss,
