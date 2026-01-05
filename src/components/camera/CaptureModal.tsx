@@ -24,7 +24,6 @@ interface CaptureModalProps {
   monsterName: string;
   monsterRank: MonsterRank;
   tips: string[];
-  message: string;
   currentTipIndex: number;
   errorMessage: string;
   onNameChange: (name: string) => void;
@@ -45,7 +44,6 @@ export default function CaptureModal({
   monsterName,
   monsterRank,
   tips,
-  message,
   currentTipIndex,
   errorMessage,
   onNameChange,
@@ -153,7 +151,7 @@ export default function CaptureModal({
         {step === 'guide' && (
           <div className="p-6 flex flex-col">
             <div className="bg-gradient-to-r from-green-400 to-green-500 -mx-6 -mt-6 px-6 py-4 mb-6">
-              <p className="text-white text-center font-bold text-lg">{message}</p>
+              <p className="text-white text-center font-bold text-lg">🌱 {category} 분리수거 방법</p>
             </div>
 
             <div className="flex-1 min-h-[200px]">

@@ -44,7 +44,6 @@ export default function CameraPage() {
         monsterName={monsterName}
         monsterRank={monsterRank}
         tips={result?.guide.tips || []}
-        message={result?.guide.message || ''}
         currentTipIndex={currentTipIndex}
         errorMessage={error}
         onNameChange={handleNameChange}
