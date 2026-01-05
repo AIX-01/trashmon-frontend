@@ -26,6 +26,7 @@ const FarmPage = () => {
   
   // 필터 및 정렬 상태
   const [filterCategory, setFilterCategory] = useState('전체');
+  const [filterRank, setFilterRank] = useState('ALL');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   useEffect(() => {
@@ -69,8 +70,11 @@ const FarmPage = () => {
   // 필터링 및 정렬 로직 적용
   const filteredCharacters = characters
     .filter(char => {
-      if (filterCategory === '전체') return true;
-      return char.category === filterCategory;
+      // 카테고리 필터
+      if (filterCategory !== '전체' && char.category !== filterCategory) return false;
+      // 랭크 필터
+      if (filterRank !== 'ALL' && char.rank !== filterRank) return false;
+      return true;
     })
     .sort((a, b) => {
       if (sortOrder === 'newest') {
@@ -222,14 +226,29 @@ const FarmPage = () => {
                 ))}
             </div>
 
-            {/* Sort Toggle */}
-            <button 
-                onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
-                className="flex items-center gap-2 bg-white px-5 py-2 rounded-xl text-blue-600 font-bold hover:bg-blue-50 transition shadow-sm"
-            >
-                <ArrowDownUp size={18} />
-                {sortOrder === 'newest' ? '최신순' : '오래된순'}
-            </button>
+            {/* Rank Filter & Sort Toggle */}
+            <div className="flex items-center gap-3">
+                {/* 랭크 필터 드롭다운 */}
+                <select
+                    value={filterRank}
+                    onChange={(e) => setFilterRank(e.target.value)}
+                    className="bg-white px-4 py-2 rounded-xl text-green-700 font-bold hover:bg-green-50 transition shadow-sm border-r-8 border-transparent outline-none cursor-pointer"
+                >
+                    <option value="ALL">전체 등급</option>
+                    <option value="S">S급 (레전드)</option>
+                    <option value="A">A급 (희귀)</option>
+                    <option value="B">B급 (일반)</option>
+                    <option value="C">C급 (평범)</option>
+                </select>
+
+                <button 
+                    onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
+                    className="flex items-center gap-2 bg-white px-5 py-2 rounded-xl text-blue-600 font-bold hover:bg-blue-50 transition shadow-sm"
+                >
+                    <ArrowDownUp size={18} />
+                    {sortOrder === 'newest' ? '최신순' : '오래된순'}
+                </button>
+            </div>
         </div>
   
         {/* Grid Area */}
