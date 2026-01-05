@@ -35,7 +35,7 @@ export default function CameraCapture({ onCapture, isLoading, error, onErrorDism
         autoPlay
         playsInline
         muted
-        className={`w-full h-full object-cover transition-opacity duration-300 ${isCameraReady ? 'opacity-100' : 'opacity-0'}`}
+        className={`w-full h-full object-cover transition-opacity duration-300 -scale-x-100 ${isCameraReady ? 'opacity-100' : 'opacity-0'}`}
       />
 
       {/* 로딩 오버레이 */}
