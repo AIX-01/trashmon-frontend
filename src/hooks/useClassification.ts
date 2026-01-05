@@ -116,7 +116,7 @@ export function useClassification() {
   const handleNextTip = useCallback(async () => {
     if (!result) return;
 
-    const tips = result.guide.tips;
+    const tips = result.guide?.tips || [];
 
     if (currentTipIndex < tips.length - 1) {
       setCurrentTipIndex(prev => prev + 1);
