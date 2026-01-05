@@ -1,15 +1,12 @@
 'use client';
 
 import React from 'react';
-import { SpeechBubble } from '../ui';
 
 interface TargetProps {
   targetRef: React.RefObject<HTMLDivElement>;
   targetPos: { x: number; y: number };
   isTargetHit: boolean;
   gameState: 'turning' | 'rainbow' | 'playing';
-  showBubble: boolean;
-  bubbleText: string;
   capturedImage: string;
   dirtOpacity: number;
   score: number;
@@ -20,8 +17,6 @@ const Target: React.FC<TargetProps> = ({
   targetPos,
   isTargetHit,
   gameState,
-  showBubble,
-  bubbleText,
   capturedImage,
   dirtOpacity,
   score,
@@ -33,12 +28,9 @@ const Target: React.FC<TargetProps> = ({
       style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%`, transform: 'translate(-50%, -50%)', transitionProperty: 'left, top, transform, opacity, filter' }}
     >
       <div className="relative w-72 h-72 animate-float">
-        {showBubble && <SpeechBubble text={bubbleText} />}
-        
         <div 
           className="w-full h-full shadow-2xl relative"
           style={{
-            // CSS Mask를 사용하여 이미지의 가장자리를 부드럽게 처리
             maskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
             WebkitMaskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
           }}

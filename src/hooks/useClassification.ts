@@ -6,13 +6,11 @@ import { getGuideByCategory, generateRandomRank, isValidCategory } from '@/lib/m
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const LOADING_MESSAGES = [
-  '쓰레기를 분석하고 있어요... 🔍',
-  '어떤 종류인지 알아보는 중... 🤔',
-  '몬스터 친구를 그리고 있어요... 🎨',
-  '거의 다 됐어요! 조금만 기다려주세요... ✨',
+  '깨끗해지고 있어... ✨',
+  '어떤 친구일까? 🤔',
+  '깨끗이 씻어주자... 💧',
 ];
 
-// ✨ FIX: 6단계 흐름을 위한 타입 정의
 export type ModalStep = 'loading' | 'intro' | 'guide' | 'naming' | 'complete' | 'error';
 
 export function useClassification() {
@@ -36,7 +34,7 @@ export function useClassification() {
       let messageIndex = 0;
       setLoadingMessage(LOADING_MESSAGES[0]);
       messageIntervalRef.current = setInterval(() => {
-        messageIndex = Math.min(messageIndex + 1, LOADING_MESSAGES.length - 1);
+        messageIndex = (messageIndex + 1) % LOADING_MESSAGES.length;
         setLoadingMessage(LOADING_MESSAGES[messageIndex]);
       }, 3000);
     } else {
@@ -86,7 +84,6 @@ export function useClassification() {
       setResult(classificationResult);
       setMonsterName(`${validatedData.category}몬`);
       setMonsterRank(generateRandomRank());
-      // ✨ FIX: 첫 단계를 'intro'로 변경
       setModalStep('intro');
     } catch (err) {
       console.error('분류 요청 실패:', err);
@@ -99,27 +96,23 @@ export function useClassification() {
     setMonsterName(name);
   }, []);
 
-  // ✨ FIX: 이름 확정 -> 저장 후 완료 단계로
   const handleNameSubmit = useCallback(async () => {
     if (!result) return;
     await saveToCollection(result, monsterName, monsterRank);
     setModalStep('complete');
   }, [result, monsterName, monsterRank]);
 
-  // ✨ FIX: 가이드 시작
   const handleStartGuide = useCallback(() => {
     setModalStep('guide');
     setCurrentTipIndex(0);
   }, []);
 
-  // ✨ FIX: 다음 팁 또는 이름짓기 단계로
   const handleNextTip = useCallback(() => {
     if (!result) return;
     const tips = result.guide?.tips || [];
     if (currentTipIndex < tips.length - 1) {
       setCurrentTipIndex(prev => prev + 1);
     } else {
-      // 모든 팁을 봤으면 이름짓기 단계로
       setModalStep('naming');
     }
   }, [result, currentTipIndex]);
@@ -156,7 +149,7 @@ export function useClassification() {
     handleCapture,
     handleNameChange,
     handleNameSubmit,
-    handleStartGuide, // ✨ FIX: 핸들러 추가
+    handleStartGuide,
     handleNextTip,
     handleRelease,
     handleCaptureAgain,

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SpeechBubble } from '../ui';
@@ -13,6 +13,11 @@ interface CompleteStepProps {
   onGoToCollection: () => void;
 }
 
+const THANKS_MESSAGES = [
+  '날 구해줘서 고마워!',
+  '나를 도와줘서 고마워!',
+];
+
 const CompleteStep: React.FC<CompleteStepProps> = ({
   monsterName,
   monsterImage,
@@ -20,14 +25,15 @@ const CompleteStep: React.FC<CompleteStepProps> = ({
   onCaptureAgain,
   onGoToCollection,
 }) => {
+  const thanksMessage = useMemo(() => THANKS_MESSAGES[Math.floor(Math.random() * THANKS_MESSAGES.length)], []);
+
   return (
     <div className="flex flex-col items-center text-center flex-grow justify-center">
       <div className="w-48 h-48 relative mb-6">
-        {showThanksBubble && <SpeechBubble text="고마워~!" />}
+        {showThanksBubble && <SpeechBubble text={thanksMessage} />}
         <Image src={monsterImage} alt={monsterName} fill className="object-contain animate-wiggle" unoptimized />
       </div>
 
-      {/* ✨ FIX: "도감 획득!" 메시지로 변경 */}
       <h2 className="text-3xl font-bold text-gray-800 mb-2">도감 획득!</h2>
       <p className="text-gray-600 text-lg mb-8">
         <span className="font-bold text-green-600">{monsterName}</span>이(가) 도감에 등록되었어요.

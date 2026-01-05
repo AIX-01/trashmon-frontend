@@ -113,6 +113,8 @@ export default function CaptureModal({
               <IntroStep
                 monsterImage={monsterImage}
                 onStartGuide={onStartGuide}
+                category={category}
+                showHelpBubble={showHelpBubble}
               />
             )}
             {step === 'guide' && (
@@ -123,7 +125,7 @@ export default function CaptureModal({
                 onNextTip={onNextTip}
                 monsterImage={monsterImage}
                 dirtOpacity={dirtOpacity}
-                showHelpBubble={false} // 말풍선은 Modal에서 직접 제어
+                showHelpBubble={showHelpBubble}
               />
             )}
             {step === 'naming' && (

@@ -1,15 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useTTS } from '@/hooks/useTTS';
-
-const HELP_MESSAGES = [
-  "으앙, 여기서 꺼내줘!",
-  "답답해! 도와줘!",
-  "누가 나 좀 구해줘~",
-  "에너지가 필요해...!",
-  "몬스터가 되고 싶어!",
-];
 
 interface Ball {
   id: number;
@@ -37,11 +28,6 @@ export const useMiniGame = () => {
   const [startTurn, setStartTurn] = useState(false);
   const [targetPos, setTargetPos] = useState({ x: 50, y: 40 });
   const targetRef = useRef<HTMLDivElement>(null);
-  
-  const [bubbleText, setBubbleText] = useState('');
-  const [showBubble, setShowBubble] = useState(false);
-
-  const { speak, startNewSession, isAvailable } = useTTS();
 
   // Game state transitions
   useEffect(() => {
@@ -49,36 +35,13 @@ export const useMiniGame = () => {
     const turnEndTimer = setTimeout(() => setGameState('rainbow'), 1200);
     const rainbowTimer = setTimeout(() => {
       setGameState('playing');
-      setShowBubble(true);
-      if (isAvailable) {
-        startNewSession();
-      }
     }, 3200);
     return () => {
       clearTimeout(turnStartTimer);
       clearTimeout(turnEndTimer);
       clearTimeout(rainbowTimer);
     };
-  }, [isAvailable, startNewSession]);
-
-  // Bubble text and TTS logic
-  useEffect(() => {
-    if (gameState === 'playing') {
-      const firstMessage = HELP_MESSAGES[0];
-      setBubbleText(firstMessage);
-      if (isAvailable) speak(firstMessage);
-
-      const bubbleInterval = setInterval(() => {
-        const newMessage = HELP_MESSAGES[Math.floor(Math.random() * HELP_MESSAGES.length)];
-        setBubbleText(newMessage);
-        setShowBubble(true);
-        if (isAvailable) speak(newMessage);
-        setTimeout(() => setShowBubble(false), 2500);
-      }, 4000);
-      
-      return () => clearInterval(bubbleInterval);
-    }
-  }, [gameState, isAvailable, speak]);
+  }, []);
 
   // Target movement
   useEffect(() => {
@@ -142,8 +105,6 @@ export const useMiniGame = () => {
     startTurn,
     targetPos,
     targetRef,
-    bubbleText,
-    showBubble,
     dirtOpacity,
     handleTouch,
     handleHit,

@@ -1,17 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import { useMiniGame } from '@/hooks/useMiniGame';
+import { useTTS } from '@/hooks/useTTS';
 import GameBackground from './minigame/GameBackground';
 import MagicWandCursor from './minigame/MagicWandCursor';
 import Target from './minigame/Target';
 import Projectile from './minigame/Projectile';
 import Particle from './minigame/Particle';
+import { SpeechBubble } from './ui';
 
 interface LoadingMiniGameProps {
   loadingMessage: string;
   capturedImage: string;
 }
+
+const HELPERS = ['/Paper.png', '/Glass.png', '/Plastic.png', '/Can.png', '/General_Waste.png'];
 
 export default function LoadingMiniGame({ loadingMessage, capturedImage }: LoadingMiniGameProps) {
   const {
@@ -23,13 +28,20 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     startTurn,
     targetPos,
     targetRef,
-    bubbleText,
-    showBubble,
     dirtOpacity,
     handleTouch,
     handleHit,
     setBalls,
   } = useMiniGame();
+
+  const { speak, isAvailable } = useTTS();
+  const randomHelper = useMemo(() => HELPERS[Math.floor(Math.random() * HELPERS.length)], []);
+
+  useEffect(() => {
+    if (isAvailable && loadingMessage) {
+      speak(loadingMessage);
+    }
+  }, [isAvailable, loadingMessage, speak]);
 
   return (
     <div 
@@ -39,7 +51,6 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     >
       <MagicWandCursor />
 
-      {/* 책 넘기기 효과 */}
       <div 
         className="absolute inset-0 z-[60] origin-left bg-black shadow-2xl"
         style={{
@@ -55,21 +66,20 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
 
       <GameBackground gameState={gameState} />
 
-      {/* 상단 메시지 */}
-      <div className={`absolute top-12 left-0 right-0 flex flex-col items-center pointer-events-none z-30 px-4 transition-all duration-1000 ${gameState === 'turning' ? 'translate-y-[-20px] opacity-0' : 'translate-y-0 opacity-100'}`}>
-        <div className="bg-white/80 backdrop-blur-md px-8 py-4 rounded-full border-2 border-green-200 shadow-xl animate-pulse">
-          <p className="text-green-800 text-2xl font-bold text-center drop-shadow-sm font-jua">{loadingMessage}</p>
+      <div className={`absolute bottom-8 right-8 flex flex-col items-center pointer-events-none z-30 px-4 transition-all duration-1000 ${gameState === 'turning' ? 'translate-y-[20px] opacity-0' : 'translate-y-0 opacity-100'}`}>
+        <div className="relative w-48 h-48 animate-float">
+          <Image src={randomHelper} alt="도우미" layout="fill" objectFit="contain" />
+          <SpeechBubble text={loadingMessage} />
         </div>
-        <p className="text-gray-600 text-lg mt-4 font-medium drop-shadow-sm text-center animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
       </div>
+
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 text-gray-600 text-lg font-medium drop-shadow-sm text-center animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
 
       <Target
         targetRef={targetRef}
         targetPos={targetPos}
         isTargetHit={isTargetHit}
         gameState={gameState}
-        showBubble={showBubble}
-        bubbleText={bubbleText}
         capturedImage={capturedImage}
         dirtOpacity={dirtOpacity}
         score={score}
