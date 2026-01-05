@@ -20,14 +20,9 @@ export const CATEGORY_GUIDES: Record<string, CategoryGuide> = {
   }
 };
 
-// 기본 가이드 (알 수 없는 카테고리용)
-export const DEFAULT_GUIDE: CategoryGuide = {
-  tips: ['다시 한번 확인해보세요.'],
-};
-
 // 카테고리로 가이드 조회
 export function getGuideByCategory(category: string): CategoryGuide {
-  return CATEGORY_GUIDES[category] || DEFAULT_GUIDE;
+  return CATEGORY_GUIDES[category];
 }
 
 /**
