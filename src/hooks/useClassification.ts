@@ -80,7 +80,7 @@ export function useClassification() {
         body: formData,
       });
 
-      if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
+      if (!response.ok) throw new Error('앗, 연결이 잘 안 돼요! 잠시 후 다시 시도해주세요.');
 
       const apiData: unknown = await response.json();
 
@@ -93,7 +93,7 @@ export function useClassification() {
         typeof (apiData as ApiResponse).category !== 'string' ||
         typeof (apiData as ApiResponse).monster_image !== 'string'
       ) {
-        throw new Error('앗, 서버에서 이상한 답이 왔어요! 다시 찍어볼까요?');
+        throw new Error('앗, 뭔가 잘못됐어요! 다시 찍어볼까요?');
       }
 
       const validatedData = apiData as ApiResponse;

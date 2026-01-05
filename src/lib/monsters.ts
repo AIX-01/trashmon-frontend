@@ -1,8 +1,17 @@
 // src/lib/monsters.ts
 import { CategoryGuide, MonsterRank } from '@/types';
 
+// 유효한 카테고리 (5개만 허용)
+export const VALID_CATEGORIES = ['종이', '유리', '플라스틱', '캔', '일반쓰레기'] as const;
+export type ValidCategory = typeof VALID_CATEGORIES[number];
+
+// 카테고리 유효성 검사
+export function isValidCategory(category: string): category is ValidCategory {
+  return VALID_CATEGORIES.includes(category as ValidCategory);
+}
+
 // 카테고리별 가이드 정보 (하드코딩)
-export const CATEGORY_GUIDES: Record<string, CategoryGuide> = {
+export const CATEGORY_GUIDES: Record<ValidCategory, CategoryGuide> = {
   '종이': {
     tips: ['테이프나 스티커는 떼어볼까요?', '이제 납작하게 접어봐요!', '종이 분류함에 쏙~ 넣으면 성공!'],
   },
@@ -20,9 +29,10 @@ export const CATEGORY_GUIDES: Record<string, CategoryGuide> = {
   }
 };
 
-// 카테고리로 가이드 조회
-export function getGuideByCategory(category: string): CategoryGuide {
-  return CATEGORY_GUIDES[category] || CATEGORY_GUIDES['일반쓰레기'];
+// 카테고리로 가이드 조회 (유효하지 않으면 null)
+export function getGuideByCategory(category: string): CategoryGuide | null {
+  if (!isValidCategory(category)) return null;
+  return CATEGORY_GUIDES[category];
 }
 
 /**
