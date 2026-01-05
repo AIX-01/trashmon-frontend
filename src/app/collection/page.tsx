@@ -197,7 +197,7 @@ const FarmPage = () => {
            <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl border-2 border-white shadow-md">
               <span className="text-green-800 font-bold text-xl">
                  수집한 쓰레기: <span className="text-orange-500 text-2xl ml-2">{filteredCharacters.length}</span>
-                 <span className="text-sm text-gray-500 ml-1">/ {characters.length}</span>
+                 <span className="text-sm text-gray-500 ml-1"></span>
               </span>
            </div>
         </div>
