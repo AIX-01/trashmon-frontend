@@ -5,7 +5,7 @@ import Image from 'next/image';
 import './HoloCard.css';
 import { MonsterRank } from '@/types';
 import { getGuideByCategory } from '@/lib/monsters';
-import { Pencil, Check, X } from 'lucide-react';
+import { Pencil, Check, X, Trash2 } from 'lucide-react';
 
 interface HoloCardProps {
   id?: number;
@@ -15,6 +15,7 @@ interface HoloCardProps {
   date?: string;
   rank: MonsterRank;
   onNameUpdate?: (newName: string) => void;
+  onDelete?: () => void;
 }
 
 // 랭크별 스타일 정의
@@ -82,7 +83,7 @@ const getRankStyles = (rank: MonsterRank) => {
   return styles[rank] || styles.B;
 };
 
-export default function HoloCard({ id, category, monsterName, imageUrl, date = '2024-01-01', rank, onNameUpdate }: HoloCardProps) {
+export default function HoloCard({ id, category, monsterName, imageUrl, date = '2024-01-01', rank, onNameUpdate, onDelete }: HoloCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(monsterName);
@@ -186,20 +187,35 @@ export default function HoloCard({ id, category, monsterName, imageUrl, date = '
 
             {/* Footer / Stats */}
             <div className={`h-32 bg-white p-3 z-10 text-xs text-slate-700 relative border-t-4 ${rankStyle.footerBorder}`}>
-               <div className="flex items-center gap-2 mb-1">
-                 <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold text-xs border border-orange-300 shadow-sm">
-                    {category}
+               <div className="flex items-center justify-between mb-1">
+                 <div className="flex items-center gap-2">
+                   <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold text-xs border border-orange-300 shadow-sm">
+                      {category}
+                   </span>
+                   <span className="text-slate-700 text-xs font-semibold">{date}</span>
+                 </div>
+                 <span className={`${rankStyle.rankDisplay} font-bold text-xs px-2 py-0.5 rounded-lg border-2 shadow-sm whitespace-nowrap`}>
+                   ★ {rankStyle.rankLabel}
                  </span>
-                 <span className="text-slate-700 text-xs font-semibold">{date}</span>
                </div>
                <p className="text-sm leading-snug text-slate-800 font-semibold mb-1">
                   자연을 사랑하는 {monsterName}!
                   분리수거를 통해 지구를 지켜주세요.
                </p>
-               <div className="mt-1 flex justify-end">
-                 <span className={`${rankStyle.rankDisplay} font-bold text-sm px-2.5 py-0.5 rounded-lg border-2 shadow-sm whitespace-nowrap`}>
-                   ★ {rankStyle.rankLabel}
-                 </span>
+               <div className="mt-1 flex justify-center items-center">
+                 {onDelete && (
+                   <button
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       if (confirm('정말 삭제할까요?')) {
+                         onDelete();
+                       }
+                     }}
+                     className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-100 hover:bg-red-200 p-1.5 rounded-full text-red-500 hover:text-red-600"
+                   >
+                     <Trash2 size={20} />
+                   </button>
+                 )}
                </div>
             </div>
 

@@ -286,6 +286,18 @@ const FarmPage = () => {
                            alert('이름 수정에 실패했어요.');
                          }
                        }}
+                       onDelete={async () => {
+                         try {
+                           const { deleteCollectionItem } = await import('@/lib/collectionStorage');
+                           await deleteCollectionItem(char.id);
+                           
+                           URL.revokeObjectURL(char.imageUrl);
+                           setCharacters(prev => prev.filter(c => c.id !== char.id));
+                         } catch (e) {
+                           console.error('삭제 실패', e);
+                           alert('삭제에 실패했어요.');
+                         }
+                       }}
                     />
                  </div>
               ))}
