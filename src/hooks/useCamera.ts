@@ -6,6 +6,7 @@ interface UseCameraReturn {
   isCameraReady: boolean;
   cameraError: string;
   startCamera: () => Promise<void>;
+  stopCamera: () => void;
   capturePhoto: (onCapture: (blob: Blob) => void) => void;
 }
 
@@ -108,6 +109,20 @@ export function useCamera(): UseCameraReturn {
   }, []);
 
   /**
+   * 카메라 스트림 중지
+   */
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraReady(false);
+  }, []);
+
+  /**
    * 비디오 준비 완료 핸들러
    */
   const handleCanPlay = useCallback(() => {
@@ -140,6 +155,7 @@ export function useCamera(): UseCameraReturn {
     isCameraReady,
     cameraError,
     startCamera,
+    stopCamera,
     capturePhoto,
   };
 }

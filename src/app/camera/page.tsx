@@ -1,48 +1,53 @@
 'use client';
 
 import CameraCapture from '@/components/camera/CameraCapture';
-import ResultDisplay from '@/components/camera/ResultDisplay';
-import CompletionMessage from '@/components/camera/CompletionMessage';
+import CaptureModal from '@/components/camera/CaptureModal';
 import { useClassification } from '@/hooks/useClassification';
 
 export default function CameraPage() {
   const {
-    isLoading,
+    isModalOpen,
+    modalStep,
     loadingMessage,
     result,
+    monsterName,
+    currentTipIndex,
     error,
-    isGuideComplete,
     handleCapture,
-    handleGuideComplete,
-    handleReset,
+    handleNameChange,
+    handleNameSubmit,
+    handleNextTip,
+    handleCaptureAgain,
+    handleGoToCollection,
+    handleErrorDismiss,
   } = useClassification();
 
   return (
     <>
-
       <CameraCapture
         onCapture={handleCapture}
-        isLoading={isLoading}
-        loadingMessage={loadingMessage}
+        isDisabled={isModalOpen}
         error={error}
-        onErrorDismiss={handleReset}
+        onErrorDismiss={handleErrorDismiss}
       />
 
-      {result && (
-        <ResultDisplay
-          category={result.category}
-          monsterImage={result.monster_image}
-          binColor={result.guide.bin_color}
-          message={result.guide.message}
-          tips={result.guide.tips}
-          isGuideComplete={isGuideComplete}
-          onGuideComplete={handleGuideComplete}
-        />
-      )}
-
-      {isGuideComplete && (
-        <CompletionMessage onReset={handleReset} />
-      )}
+      <CaptureModal
+        isOpen={isModalOpen}
+        step={modalStep}
+        loadingMessage={loadingMessage}
+        category={result?.category || ''}
+        monsterImage={result?.monster_image || ''}
+        monsterName={monsterName}
+        tips={result?.guide.tips || []}
+        binColor={result?.guide.bin_color || ''}
+        message={result?.guide.message || ''}
+        currentTipIndex={currentTipIndex}
+        onNameChange={handleNameChange}
+        onNameSubmit={handleNameSubmit}
+        onNextTip={handleNextTip}
+        onGoToCollection={handleGoToCollection}
+        onCaptureAgain={handleCaptureAgain}
+      />
     </>
   );
 }

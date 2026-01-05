@@ -21,13 +21,17 @@ function base64ToBlob(base64: string, mimeType: string = 'image/png'): Blob {
 /**
  * 도감에 새로운 몬스터 저장
  */
-export async function saveToCollection(resultData: ClassificationResult): Promise<void> {
+export async function saveToCollection(
+  resultData: ClassificationResult,
+  monsterName: string
+): Promise<void> {
   try {
     const imageBlob = base64ToBlob(resultData.monster_image);
     const rank = generateRandomRank();
 
     await db.collection.add({
       category: resultData.category,
+      monsterName,
       monsterImage: imageBlob,
       rank,
       capturedAt: new Date(),
