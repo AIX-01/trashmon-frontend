@@ -142,6 +142,10 @@ export function useCamera(): UseCameraReturn {
     canvas.width = Math.round(sourceWidth * scale);
     canvas.height = Math.round(sourceHeight * scale);
 
+    // 좌우 반전 적용
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
+
     // 화면에 보이는 영역만 캔버스에 그리기
     context.drawImage(
       video,
