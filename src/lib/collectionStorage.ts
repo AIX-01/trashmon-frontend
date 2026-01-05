@@ -65,6 +65,18 @@ export async function updateCollectionItem(id: number, updates: Partial<Omit<Col
 }
 
 /**
+ * 도감 아이템 삭제
+ */
+export async function deleteCollectionItem(id: number): Promise<void> {
+  try {
+    await db.collection.delete(id);
+  } catch (e) {
+    console.error('도감 삭제 실패:', e);
+    throw e;
+  }
+}
+
+/**
  * 도감 초기화
  */
 export async function clearCollection(): Promise<void> {
