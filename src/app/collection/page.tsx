@@ -19,8 +19,8 @@ interface CharacterWithUrl {
   rank: MonsterRank;
 }
 
-// Farm Component
-const FarmPage = () => {
+// Collection Component
+const CollectionPage = () => {
   const [characters, setCharacters] = useState<CharacterWithUrl[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -192,6 +192,9 @@ const FarmPage = () => {
               <h1 className="text-5xl md:text-6xl font-bold text-white tracking-wide drop-shadow-[0_4px_0_rgba(0,0,0,0.2)] text-stroke-3">
                  나의 도감
               </h1>
+              <Link href="/farm" className="bg-white hover:bg-green-50 text-green-600 p-3 rounded-2xl transition shadow-lg border-2 border-green-200 group">
+                 팜으로 가기
+              </Link>
            </div>
            
            <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl border-2 border-white shadow-md">
@@ -309,4 +312,4 @@ const FarmPage = () => {
   );
 };
 
-export default FarmPage;
+export default CollectionPage;

@@ -17,10 +17,13 @@ const FarmUI: React.FC<FarmUIProps> = ({ monsterCount, selectedMonster, onCloseM
     <>
       {/* UI: 헤더 */}
       <div className="absolute top-0 left-0 w-full p-6 z-50 flex justify-between items-start pointer-events-none">
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex gap-4">
           <Link href="/app" className="bg-white/90 hover:bg-white text-green-700 p-3 rounded-2xl shadow-lg border-2 border-green-200 inline-flex items-center gap-2 transition-transform hover:scale-105">
              <ArrowLeft size={24} />
              <span className="font-bold text-lg">나가기</span>
+          </Link>
+          <Link href="/collection" className="bg-white/90 hover:bg-white text-green-700 p-3 rounded-2xl shadow-lg border-2 border-green-200 inline-flex items-center gap-2 transition-transform hover:scale-105">
+             <span className="font-bold text-lg">도감</span>
           </Link>
         </div>
         
