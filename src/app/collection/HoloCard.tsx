@@ -6,7 +6,6 @@ import './HoloCard.css';
 import { MonsterRank } from '@/types';
 
 interface HoloCardProps {
-  id: string;
   category: string;
   monsterName?: string;
   imageUrl: string;

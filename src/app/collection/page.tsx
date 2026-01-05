@@ -250,7 +250,6 @@ const FarmPage = () => {
               {filteredCharacters.map((char) => (
                  <div key={char.id} className="transform hover:-translate-y-2 transition-transform duration-300">
                     <HoloCard
-                       id={String(char.id)}
                        category={char.category}
                        monsterName={char.monsterName}
                        imageUrl={char.imageUrl}

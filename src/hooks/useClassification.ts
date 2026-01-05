@@ -77,7 +77,6 @@ export function useClassification() {
       };
 
       setResult(classificationResult);
-      // 저장은 나중에 사용자가 이름 입력 후 진행 예정
       await saveToCollection(classificationResult);
     } catch (err) {
       console.error('분류 요청 실패:', err);

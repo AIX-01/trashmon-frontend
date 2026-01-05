@@ -49,10 +49,8 @@ export function getGuideByCategory(category: string): CategoryGuide {
 export function generateRandomRank(): MonsterRank {
   const random = Math.random() * 100;
 
-  if (random < 10) return 'S';        // 0~10: S (10%)
-  if (random < 30) return 'A';        // 10~30: A (20%)
-  if (random < 60) return 'B';        // 30~60: B (30%)
-  return 'C';                          // 60~100: C (40%)
+  if (random < 10) return 'S';
+  if (random < 30) return 'A';
+  if (random < 60) return 'B';
+  return 'C';
 }
-
-export const ALL_CATEGORIES = Object.keys(CATEGORY_GUIDES);
