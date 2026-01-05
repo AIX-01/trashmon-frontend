@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { ApiResponse, ClassificationResult, MonsterRank } from '@/types';
 import { saveToCollection } from '@/lib/collectionStorage';
-import { getGuideByCategory, generateRandomRank } from '@/lib/monsters';
+import { getGuideByCategory, generateRandomRank, isValidCategory } from '@/lib/monsters';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -82,22 +82,45 @@ export function useClassification() {
 
       if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
 
-      const apiData: ApiResponse = await response.json();
-      const guide = getGuideByCategory(apiData.category);
+      const apiData: unknown = await response.json();
+
+      // 응답 유효성 검사
+      if (
+        !apiData ||
+        typeof apiData !== 'object' ||
+        !('category' in apiData) ||
+        !('monster_image' in apiData) ||
+        typeof (apiData as ApiResponse).category !== 'string' ||
+        typeof (apiData as ApiResponse).monster_image !== 'string'
+      ) {
+        throw new Error('앗, 서버에서 이상한 답이 왔어요! 다시 찍어볼까요?');
+      }
+
+      const validatedData = apiData as ApiResponse;
+
+      // 카테고리 유효성 검사 (5개 중 하나가 아니면 에러)
+      if (!isValidCategory(validatedData.category)) {
+        throw new Error('음... 이게 뭔지 모르겠어요! 다른 쓰레기를 찍어볼까요?');
+      }
+
+      const guide = getGuideByCategory(validatedData.category);
+      if (!guide) {
+        throw new Error('어라? 분리수거 방법을 찾을 수 없어요!');
+      }
 
       const classificationResult: ClassificationResult = {
-        category: apiData.category,
-        monster_image: apiData.monster_image,
+        category: validatedData.category,
+        monster_image: validatedData.monster_image,
         guide,
       };
 
       setResult(classificationResult);
-      setMonsterName(`${apiData.category}몬`);
+      setMonsterName(`${validatedData.category}몬`);
       setMonsterRank(generateRandomRank());
       setModalStep('naming');
     } catch (err) {
       console.error('분류 요청 실패:', err);
-      setError('몬스터를 찾는 데 실패했어요. 서버에 문제가 있나봐요!');
+      setError(err instanceof Error ? err.message : '몬스터를 찾는 데 실패했어요.');
       setModalStep('error');
     }
   }, []);
