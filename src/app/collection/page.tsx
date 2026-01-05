@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAllCollection, createImageUrl, seedDummyData } from '@/lib/collectionStorage';
+import { getAllCollection, createImageUrl } from '@/lib/collectionStorage';
 import HoloCard from './HoloCard';
 import { MonsterRank } from '@/types';
 import { Sun, Cloud, ArrowLeft, ArrowDownUp } from 'lucide-react';
@@ -32,8 +32,6 @@ const FarmPage = () => {
   useEffect(() => {
     const loadCollection = async () => {
       try {
-        // 도감이 비어있으면 더미 데이터 추가
-        await seedDummyData();
 
         const items = await getAllCollection();
 
