@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getAllCollection, createImageUrl } from '@/lib/collectionStorage';
 import { MonsterRank } from '@/types';
 import { Sun, Cloud, ArrowLeft, Music, Volume2, VolumeX } from 'lucide-react';
+import HoloCard from '@/app/collection/HoloCard';
 
 // 몬스터 타입 정의
 interface FarmMonster {
@@ -12,6 +13,8 @@ interface FarmMonster {
   name: string;
   imageUrl: string;
   rank: MonsterRank;
+  category: string;
+  capturedAt: Date;
   x: number; // 농장 내 X 좌표 (%)
   y: number; // 농장 내 Y 좌표 (%)
   speed: number; // 이동 속도
@@ -40,12 +43,14 @@ export default function FarmPage() {
           name: item.monsterName,
           imageUrl: createImageUrl(item.monsterImage),
           rank: item.rank,
+          category: item.category,
+          capturedAt: item.capturedAt,
           // 초기 위치 랜덤 배치 (화면 하단 2/3 영역)
           x: Math.random() * 90 + 5, 
           y: Math.random() * 40 + 50,
           speed: 0.05 + Math.random() * 0.1,
           direction: Math.random() * 360,
-          scale: 0.8 + Math.random() * 0.4,
+          scale: 1.0, 
           action: 'idle',
           actionTimer: Math.random() * 200
         }));
@@ -84,24 +89,28 @@ export default function FarmPage() {
           // 행동 변경 로직
           if (actionTimer <= 0) {
             const rand = Math.random();
-            if (rand < 0.4) action = 'walk';
-            else if (rand < 0.7) action = 'idle';
-            else if (rand < 0.9) action = 'jump';
-            else action = 'sleep';
+            // 확률 조정: sleep과 idle 비중을 높여서 덜 정신사납게 함
+            if (rand < 0.3) action = 'walk';       // 30% 걷기
+            else if (rand < 0.6) action = 'idle';  // 30% 대기
+            else if (rand < 0.8) action = 'jump';  // 20% 점프 (활발)
+            else action = 'sleep';                 // 20% 잠 (정지)
             
             actionTimer = 100 + Math.random() * 200;
             
-            // 걷기 시작할 때 방향 변경
-            if (action === 'walk') {
+            // 이동 시작할 때 방향 변경
+            if (action === 'walk' || action === 'jump') {
               direction = Math.random() * 360;
             }
           }
 
-          // 이동 로직 (걷기 상태일 때만)
-          if (action === 'walk') {
+          // 이동 로직 (걷기 또는 점프 상태일 때만 이동)
+          // 점프 상태일 때는 더 빠르게 이동하여 활발함 표현
+          if (action === 'walk' || action === 'jump') {
+            const moveSpeed = action === 'jump' ? speed * 2.0 : speed; // 점프는 2배 속도
+            
             const rad = direction * (Math.PI / 180);
-            x += Math.cos(rad) * speed;
-            y += Math.sin(rad) * speed;
+            x += Math.cos(rad) * moveSpeed;
+            y += Math.sin(rad) * moveSpeed;
 
             // 벽 충돌 처리 (반사)
             if (x < 5 || x > 95) {
@@ -115,7 +124,7 @@ export default function FarmPage() {
           }
 
           // Y축 위치에 따른 원근감 처리 (아래로 갈수록 커짐)
-          const scale = 0.5 + ((y - 50) / 40) * 0.5;
+          const scale = 0.8 + ((y - 50) / 40) * 0.8;
 
           return { ...monster, x, y, direction, action, actionTimer, scale };
         })
@@ -162,9 +171,9 @@ export default function FarmPage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        @keyframes bounce-gentle {
+        @keyframes bounce-fast {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          50% { transform: translateY(-20px); }
         }
         @keyframes sleep-z {
           0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
@@ -174,7 +183,7 @@ export default function FarmPage() {
         
         .animate-drift { animation: drift linear infinite; }
         .animate-spin-slow { animation: ray-spin 30s linear infinite; }
-        .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+        .animate-bounce-fast { animation: bounce-fast 0.6s ease-in-out infinite; }
         .animate-sleep { animation: sleep-z 2s ease-out infinite; }
       `}</style>
 
@@ -233,93 +242,91 @@ export default function FarmPage() {
         <div className="absolute bottom-0 w-full h-[50%] bg-gradient-to-t from-green-600 to-green-400" />
         
         {/* 몬스터 렌더링 */}
-        {monsters.map((monster) => (
-          <div
-            key={monster.id}
-            className="absolute transform -translate-x-1/2 -translate-y-full cursor-pointer transition-transform duration-300"
-            style={{
-              left: `${monster.x}%`,
-              top: `${monster.y}%`,
-              zIndex: Math.floor(monster.y), // 아래에 있을수록 앞에 보이게
-            }}
-            onClick={() => setSelectedMonster(monster)}
-          >
-            <div 
-              className="relative group"
-              style={{ transform: `scale(${monster.scale})` }}
+        {monsters.length === 0 ? (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+            <p className="text-4xl mb-4">🍃</p>
+            <p className="text-white text-xl font-bold drop-shadow-md">아직 농장이 비어있어요!</p>
+            <p className="text-white/80 text-sm mt-2">카메라로 쓰레기를 찍어 몬스터를 데려오세요.</p>
+          </div>
+        ) : (
+          monsters.map((monster) => (
+            <div
+              key={monster.id}
+              className="absolute transform -translate-x-1/2 -translate-y-full cursor-pointer transition-transform duration-300"
+              style={{
+                left: `${monster.x}%`,
+                top: `${monster.y}%`,
+                zIndex: Math.floor(monster.y), // 아래에 있을수록 앞에 보이게
+              }}
+              onClick={() => setSelectedMonster(monster)}
             >
-              {/* 말풍선 (이름) */}
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white/90 px-3 py-1 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
-                <span className="text-sm font-bold text-gray-700">{monster.name}</span>
-              </div>
-
-              {/* 상태 아이콘 (Zzz, 음표 등) */}
-              {monster.action === 'sleep' && (
-                <div className="absolute -top-8 right-0 text-blue-500 font-bold text-xl animate-sleep">Zzz...</div>
-              )}
-              {monster.action === 'jump' && (
-                <div className="absolute -top-8 left-0 text-orange-500 font-bold text-xl animate-bounce">♪</div>
-              )}
-
-              {/* 몬스터 이미지 */}
               <div 
-                className={`
-                  w-24 h-24 relative transition-all duration-500
-                  ${monster.action === 'jump' ? 'animate-bounce-gentle' : ''}
-                  ${monster.direction > 90 && monster.direction < 270 ? 'scale-x-[-1]' : ''} /* 방향에 따라 좌우 반전 */
-                `}
+                className="relative group"
+                style={{ transform: `scale(${monster.scale})` }}
               >
-                {/* 그림자 */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/20 rounded-full blur-sm" />
-                
-                {/* 본체 */}
-                <img 
-                  src={monster.imageUrl} 
-                  alt={monster.name}
+                {/* 말풍선 (이름) */}
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white/90 px-3 py-1 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                  <span className="text-sm font-bold text-gray-700">{monster.name}</span>
+                </div>
+
+                {/* 상태 아이콘 (Zzz, 음표 등) */}
+                {monster.action === 'sleep' && (
+                  <div className="absolute -top-8 right-0 text-blue-500 font-bold text-xl animate-sleep">Zzz...</div>
+                )}
+                {monster.action === 'jump' && (
+                  <div className="absolute -top-8 left-0 text-orange-500 font-bold text-xl animate-bounce">♪</div>
+                )}
+
+                {/* 몬스터 이미지 */}
+                <div 
                   className={`
-                    w-full h-full object-contain drop-shadow-lg
-                    ${monster.action === 'sleep' ? 'brightness-90 grayscale-[0.3]' : ''}
+                    w-32 h-32 relative transition-all duration-500
+                    ${monster.action === 'jump' ? 'animate-bounce-fast' : ''}
+                    ${monster.direction > 90 && monster.direction < 270 ? 'scale-x-[-1]' : ''} /* 방향에 따라 좌우 반전 */
                   `}
-                />
+                >
+                  {/* 그림자 */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-black/20 rounded-full blur-sm" />
+                  
+                  {/* 본체 */}
+                  <img 
+                    src={monster.imageUrl} 
+                    alt={monster.name}
+                    className={`
+                      w-full h-full object-contain drop-shadow-lg
+                      ${monster.action === 'sleep' ? 'brightness-90 grayscale-[0.3]' : ''}
+                    `}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {/* 몬스터 상세 정보 모달 (클릭 시) */}
+      {/* 몬스터 상세 정보 모달 (HoloCard 재활용) */}
       {selectedMonster && (
         <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelectedMonster(null)}>
           <div 
-            className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl transform transition-all scale-100 animate-bounce-gentle"
+            className="transform transition-all scale-100 animate-bounce-gentle"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full h-48 mb-4 bg-gradient-to-b from-sky-100 to-white rounded-2xl flex items-center justify-center overflow-hidden border-2 border-sky-200">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent opacity-50" />
-              <img 
-                src={selectedMonster.imageUrl} 
-                alt={selectedMonster.name} 
-                className="w-40 h-40 object-contain drop-shadow-xl animate-bounce-gentle"
-              />
-            </div>
+            <HoloCard
+              id={selectedMonster.id}
+              category={selectedMonster.category}
+              monsterName={selectedMonster.name}
+              imageUrl={selectedMonster.imageUrl}
+              date={selectedMonster.capturedAt.toLocaleDateString()}
+              rank={selectedMonster.rank}
+              // 농장에서는 수정/삭제 기능 비활성화 (읽기 전용)
+            />
             
-            <div className="text-center">
-              <div className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-sm mb-2">
-                {selectedMonster.rank} Rank
-              </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">{selectedMonster.name}</h2>
-              <p className="text-gray-500 mb-6">
-                "안녕! 나는 {selectedMonster.name}이야!<br/>
-                오늘도 깨끗한 지구를 위해 힘내자!"
-              </p>
-              
-              <button 
-                onClick={() => setSelectedMonster(null)}
-                className="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-3 rounded-2xl shadow-lg transition-colors"
-              >
-                안녕, 잘 가! 👋
-              </button>
-            </div>
+            <button 
+              onClick={() => setSelectedMonster(null)}
+              className="w-full bg-white/90 hover:bg-white text-green-600 font-bold py-3 rounded-2xl shadow-lg mt-4 transition-colors"
+            >
+              닫기
+            </button>
           </div>
         </div>
       )}
