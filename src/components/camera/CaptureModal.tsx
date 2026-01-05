@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { MonsterRank } from '@/types';
+import { useTTS } from '@/hooks/useTTS';
 
 type ModalStep = 'loading' | 'naming' | 'guide' | 'complete' | 'error';
 
@@ -53,6 +55,42 @@ export default function CaptureModal({
   onGoToCollection,
   onCaptureAgain,
 }: CaptureModalProps) {
+  const { speak, startNewSession, isAvailable } = useTTS();
+  const hasStartedSessionRef = useRef(false);
+  const lastSpokenTipIndexRef = useRef(-1);
+
+  // guide 단계 진입 시 새 TTS 세션 시작 (랜덤 음성 선택)
+  useEffect(() => {
+    if (step === 'guide' && !hasStartedSessionRef.current && isAvailable) {
+      startNewSession();
+      hasStartedSessionRef.current = true;
+      lastSpokenTipIndexRef.current = -1;
+      console.log('[CaptureModal] New TTS session started for guide');
+    }
+
+    // 다른 단계로 이동하면 세션 플래그 리셋
+    if (step !== 'guide') {
+      hasStartedSessionRef.current = false;
+    }
+  }, [step, startNewSession, isAvailable]);
+
+  // 각 tip이 표시될 때 TTS로 음성 출력
+  useEffect(() => {
+    if (
+      step === 'guide' &&
+      isAvailable &&
+      tips.length > 0 &&
+      currentTipIndex >= 0 &&
+      currentTipIndex !== lastSpokenTipIndexRef.current
+    ) {
+      const currentTip = tips[currentTipIndex];
+      if (currentTip) {
+        lastSpokenTipIndexRef.current = currentTipIndex;
+        speak(currentTip);
+      }
+    }
+  }, [step, currentTipIndex, tips, speak, isAvailable]);
+
   if (!isOpen) return null;
 
   return (
@@ -129,11 +167,10 @@ export default function CaptureModal({
               <button
                 onClick={onNameSubmit}
                 disabled={!monsterName.trim()}
-                className={`w-full text-xl font-bold py-4 rounded-2xl shadow-lg transition-all ${
-                  monsterName.trim() 
-                    ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
+                className={`w-full text-xl font-bold py-4 rounded-2xl shadow-lg transition-all ${monsterName.trim()
+                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
               >
                 이름 정하기
               </button>
