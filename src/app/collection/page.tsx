@@ -3,18 +3,18 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CollectionItem } from '@/types';
 import { getAllCollection, createImageUrl, seedDummyData } from '@/lib/collectionStorage';
 import HoloCard from './HoloCard';
+import { MonsterRank } from '@/types';
 
 // 이미지 URL이 포함된 캐릭터 타입
 interface CharacterWithUrl {
   id: number;
   category: string;
-  monsterName: string;
+  monsterName?: string;
   imageUrl: string;
   date: string;
-  rank: string;
+  rank: MonsterRank;
 }
 
 // Farm Component
@@ -37,7 +37,7 @@ const FarmPage = () => {
           monsterName: item.monsterName,
           imageUrl: createImageUrl(item.monsterImage),
           date: item.capturedAt.toLocaleDateString(),
-          rank: 'B', // 기본 랭크
+          rank: item.rank,
         }));
 
         setCharacters(charactersWithUrls);

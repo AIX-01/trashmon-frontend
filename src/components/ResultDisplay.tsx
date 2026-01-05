@@ -10,7 +10,6 @@ import RecyclingGuide from './RecyclingGuide';
 
 interface ResultDisplayProps {
   category: string;
-  monsterName: string;
   monsterImage: string;
   binColor: string;
   message: string;
@@ -21,7 +20,6 @@ interface ResultDisplayProps {
 
 export default function ResultDisplay({
   category,
-  monsterName,
   monsterImage,
   binColor,
   message,
@@ -37,7 +35,7 @@ export default function ResultDisplay({
     <div className="fixed inset-0 z-30 flex flex-col items-center justify-center p-4 bg-brand-yellow-light/95 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-sm flex flex-col space-y-6">
         <MonsterCharacter
-          monsterName={monsterName}
+          category={category}
           monsterImage={monsterImage}
         />
         <RecyclingGuide

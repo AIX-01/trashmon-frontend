@@ -3,12 +3,12 @@
 import Image from 'next/image';
 
 interface MonsterCharacterProps {
-  monsterName: string;
+  category: string;
   monsterImage: string;  // Base64 이미지 또는 Object URL
 }
 
 export default function MonsterCharacter({
-  monsterName,
+  category,
   monsterImage,
 }: MonsterCharacterProps) {
   return (
@@ -17,14 +17,14 @@ export default function MonsterCharacter({
       <div className="relative w-48 h-48 animate-float">
         <Image
           src={monsterImage}
-          alt={monsterName}
+          alt={`${category} 몬스터`}
           fill
           className="object-contain"
           unoptimized
         />
       </div>
-      {/* 몬스터 이름 */}
-      <p className="mt-4 text-2xl font-bold text-dark-text">{monsterName}</p>
+      {/* 카테고리 이름 */}
+      <p className="mt-4 text-2xl font-bold text-dark-text">{category}</p>
     </div>
   );
 }

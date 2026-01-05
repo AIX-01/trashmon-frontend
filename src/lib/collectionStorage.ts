@@ -1,5 +1,6 @@
 import { CollectionItem, ClassificationResult } from '@/types';
 import { db } from './db';
+import { generateRandomRank } from './monsters';
 
 /**
  * Base64 문자열을 Blob으로 변환
@@ -26,10 +27,13 @@ export async function saveToCollection(resultData: ClassificationResult): Promis
     // 이미지를 Blob으로 변환
     const imageBlob = base64ToBlob(resultData.monster_image);
 
+    // 랜덤 랭크 생성 (S=10%, A=20%, B=30%, C=40%)
+    const rank = generateRandomRank();
+
     await db.collection.add({
       category: resultData.category,
-      monsterName: resultData.monster_name,
       monsterImage: imageBlob,
+      rank,
       capturedAt: new Date(),
     });
   } catch (e) {
@@ -151,6 +155,7 @@ export async function seedDummyData(): Promise<void> {
         category: monster.category,
         monsterName: monster.name,
         monsterImage: createDummyImageBlob(monster.name, monster.color),
+        rank: generateRandomRank(),
         capturedAt: getRandomDate(),
       }));
 

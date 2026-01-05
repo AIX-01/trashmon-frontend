@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
-import { ClassificationResult } from '@/types';
+import { ApiResponse, ClassificationResult } from '@/types';
 import { saveToCollection } from '@/lib/collectionStorage';
+import { getGuideByCategory } from '@/lib/monsters';
 
 // API 서버 주소
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -28,13 +29,22 @@ export function useClassification() {
         body: formData,
       });
       if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
-      const data: ClassificationResult = await response.json();
-      if (data.success) {
-        setResult(data);
-        await saveToCollection(data);
-      } else {
-        setError('분류에 실패했어요. 다시 시도해주세요!');
-      }
+
+      // 서버에서 category, monster_image만 받음
+      const apiData: ApiResponse = await response.json();
+
+      // 프론트엔드에서 가이드 매핑
+      const guide = getGuideByCategory(apiData.category);
+
+      const classificationResult: ClassificationResult = {
+        category: apiData.category,
+        monster_image: apiData.monster_image,
+        guide,
+      };
+
+      setResult(classificationResult);
+      // 저장은 나중에 사용자가 이름 입력 후 진행 예정
+      await saveToCollection(classificationResult);
     } catch (err) {
       console.error('분류 요청 실패:', err);
       setError('몬스터를 찾는 데 실패했어요. 서버에 문제가 있나봐요!');

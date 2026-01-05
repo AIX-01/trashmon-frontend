@@ -3,17 +3,18 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import './HoloCard.css';
+import { MonsterRank } from '@/types';
 
 interface HoloCardProps {
   id: string;
   category: string;
-  monsterName: string;
+  monsterName?: string;
   imageUrl: string;
   date?: string;
-  rank?: string;
+  rank: MonsterRank;
 }
 
-export default function HoloCard({ id, category, monsterName, imageUrl, date = '2024-01-01', rank = 'B' }: HoloCardProps) {
+export default function HoloCard({ category, monsterName, imageUrl, date = '2024-01-01', rank }: HoloCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleClick = () => {
@@ -30,7 +31,7 @@ export default function HoloCard({ id, category, monsterName, imageUrl, date = '
             
             {/* Header / Name */}
             <div className="h-12 bg-gray-800 flex items-center justify-between px-3 border-b-2 border-yellow-600 z-10">
-              <span className="text-yellow-400 font-bold text-lg">{monsterName}</span>
+              <span className="text-yellow-400 font-bold text-lg">{monsterName || category}</span>
               <span className="text-white text-xs bg-red-600 px-1 rounded">HP 120</span>
             </div>
 
@@ -40,7 +41,7 @@ export default function HoloCard({ id, category, monsterName, imageUrl, date = '
                <div className="z-20 relative w-32 h-32">
                  <Image
                    src={imageUrl}
-                   alt={monsterName}
+                   alt={monsterName || category}
                    fill
                    className="object-contain"
                    unoptimized
@@ -64,7 +65,7 @@ export default function HoloCard({ id, category, monsterName, imageUrl, date = '
 
         {/* BACK */}
         <div className="holo-card-face holo-card-back bg-white border-8 border-blue-800">
-          <h2 className="text-2xl font-bold text-center mb-4 text-blue-900">{monsterName}</h2>
+          <h2 className="text-2xl font-bold text-center mb-4 text-blue-900">{monsterName || category}</h2>
 
           <div className="space-y-4">
              <div>

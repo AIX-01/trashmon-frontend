@@ -11,8 +11,8 @@ class TrashMonDB extends Dexie {
   constructor() {
     super('trashmon-db');
 
-    this.version(2).stores({
-      collection: '++id, category, monsterName, capturedAt',
+    this.version(4).stores({
+      collection: '++id, category, rank, capturedAt',
     });
   }
 }

@@ -3,14 +3,15 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { CollectionItem } from '@/types';
+import { CollectionItem, MonsterRank } from '@/types';
 import { createImageUrl } from '@/lib/collectionStorage';
 
 interface MonsterWithUrl {
   id: number;
   category: string;
-  monsterName: string;
+  monsterName?: string;
   imageUrl: string;
+  rank: MonsterRank;
 }
 
 interface PokedexModalProps {
@@ -29,6 +30,7 @@ const PokedexModal: React.FC<PokedexModalProps> = ({ isOpen, onClose, collection
         category: item.category,
         monsterName: item.monsterName,
         imageUrl: createImageUrl(item.monsterImage),
+        rank: item.rank,
       }));
       setMonstersWithUrls(monsters);
 
@@ -62,14 +64,14 @@ const PokedexModal: React.FC<PokedexModalProps> = ({ isOpen, onClose, collection
                 <div className="w-20 h-20 mx-auto mb-2 relative">
                   <Image
                     src={monster.imageUrl}
-                    alt={monster.monsterName}
+                    alt={monster.monsterName || monster.category}
                     fill
                     className="object-contain"
                     unoptimized
                   />
                 </div>
-                <p className="text-sm font-medium truncate">{monster.monsterName}</p>
-                <p className="text-xs text-gray-500">{monster.category}</p>
+                <p className="text-sm font-medium truncate">{monster.monsterName || monster.category}</p>
+                <p className="text-xs text-gray-400">{monster.rank} Rank</p>
               </div>
             ))}
           </div>

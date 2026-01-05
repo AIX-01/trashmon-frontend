@@ -29,7 +29,6 @@ export default function CameraPage() {
       {result && (
         <ResultDisplay
           category={result.category}
-          monsterName={result.monster_name}
           monsterImage={result.monster_image}
           binColor={result.guide.bin_color}
           message={result.guide.message}
