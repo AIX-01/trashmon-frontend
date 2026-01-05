@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTTS } from '@/hooks/useTTS';
 import LoadingMiniGame from './LoadingMiniGame';
-import NamingStep from './steps/NamingStep';
+import IntroStep from './steps/IntroStep';
 import GuideStep from './steps/GuideStep';
+import NamingStep from './steps/NamingStep';
 import CompleteStep from './steps/CompleteStep';
 import ErrorStep from './steps/ErrorStep';
 import { MonsterRank } from '@/types';
-
-type ModalStep = 'loading' | 'naming' | 'guide' | 'complete' | 'error';
+import { ModalStep } from '@/hooks/useClassification';
 
 interface CaptureModalProps {
   isOpen: boolean;
@@ -25,6 +25,7 @@ interface CaptureModalProps {
   errorMessage: string;
   onNameChange: (name: string) => void;
   onNameSubmit: () => void;
+  onStartGuide: () => void;
   onNextTip: () => void;
   onRelease: () => void;
   onGoToCollection: () => void;
@@ -45,46 +46,43 @@ export default function CaptureModal({
   errorMessage,
   onNameChange,
   onNameSubmit,
+  onStartGuide,
   onNextTip,
   onRelease,
   onGoToCollection,
   onCaptureAgain,
 }: CaptureModalProps) {
   const { speak, startNewSession, isAvailable } = useTTS();
-  const hasStartedSessionRef = useRef(false);
-  const lastSpokenTipIndexRef = useRef(-1);
+  const [showHelpBubble, setShowHelpBubble] = useState(false);
   const [showThanksBubble, setShowThanksBubble] = useState(false);
 
-  // TTS 관련 로직
+  // 말풍선 및 TTS 로직
   useEffect(() => {
-    if (step === 'naming') {
-      const thanksMessage = "구해줘서 고마워!";
-      setShowThanksBubble(true);
-      if (isAvailable) {
-        startNewSession();
-        speak(thanksMessage);
-      }
-      const timer = setTimeout(() => setShowThanksBubble(false), 4000);
+    if (!isAvailable) return;
+
+    const messages: Record<ModalStep, string> = {
+      intro: "가이드를 따라서 나를 도와줘!",
+      naming: "나를 도와줘서 고마워!",
+      complete: "고마워~!",
+      loading: '', guide: '', error: '', // Add other steps to satisfy type
+    };
+
+    const message = messages[step];
+    if (message) {
+      startNewSession();
+      speak(message);
+      
+      const bubbleSetter = step === 'intro' || step === 'naming' ? setShowHelpBubble : setShowThanksBubble;
+      bubbleSetter(true);
+      const timer = setTimeout(() => bubbleSetter(false), 4000);
       return () => clearTimeout(timer);
     }
   }, [step, isAvailable, startNewSession, speak]);
 
   useEffect(() => {
-    if (step === 'guide' && !hasStartedSessionRef.current && isAvailable) {
-      startNewSession();
-      hasStartedSessionRef.current = true;
-      lastSpokenTipIndexRef.current = -1;
-    }
-    if (step !== 'guide') {
-      hasStartedSessionRef.current = false;
-    }
-  }, [step, startNewSession, isAvailable]);
-
-  useEffect(() => {
-    if (step === 'guide' && isAvailable && tips.length > 0 && currentTipIndex >= 0 && currentTipIndex !== lastSpokenTipIndexRef.current) {
+    if (step === 'guide' && isAvailable && tips.length > 0 && currentTipIndex >= 0) {
       const currentTip = tips[currentTipIndex];
       if (currentTip) {
-        lastSpokenTipIndexRef.current = currentTipIndex;
         speak(currentTip);
       }
     }
@@ -92,74 +90,87 @@ export default function CaptureModal({
 
   if (!isOpen) return null;
 
-  const renderStep = () => {
-    switch (step) {
-      case 'naming':
-        return (
-          <NamingStep
-            category={category}
-            monsterImage={monsterImage}
-            monsterName={monsterName}
-            monsterRank={monsterRank}
-            showThanksBubble={showThanksBubble}
-            onNameChange={onNameChange}
-            onNameSubmit={onNameSubmit}
-            onRelease={onRelease}
-          />
-        );
-      case 'guide':
-        return (
-          <GuideStep
-            category={category}
-            tips={tips}
-            currentTipIndex={currentTipIndex}
-            onNextTip={onNextTip}
-          />
-        );
-      case 'complete':
-        return (
-          <CompleteStep
-            monsterName={monsterName}
-            onCaptureAgain={onCaptureAgain}
-            onGoToCollection={onGoToCollection}
-          />
-        );
-      case 'error':
-        return (
-          <ErrorStep
-            errorMessage={errorMessage}
-            onCaptureAgain={onCaptureAgain}
-          />
-        );
-      default:
-        return null;
+  const totalTips = tips.length > 0 ? tips.length : 1;
+  const dirtOpacity = step === 'guide' ? Math.max(0, 1 - (currentTipIndex + 1) / totalTips) : 0;
+
+  const renderContent = () => {
+    if (step === 'loading') {
+      return <LoadingMiniGame loadingMessage={loadingMessage} capturedImage={capturedImage} />;
     }
+
+    return (
+      <>
+        {capturedImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${capturedImage})`, filter: 'blur(20px) brightness(0.5)', transform: 'scale(1.1)' }}
+          />
+        )}
+        {!capturedImage && <div className="absolute inset-0 bg-black/70" />}
+        <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in relative z-10 flex flex-col min-h-[80vh] sm:min-h-0">
+          <div className="p-8 flex-grow flex flex-col">
+            {step === 'intro' && (
+              <IntroStep
+                monsterImage={monsterImage}
+                onStartGuide={onStartGuide}
+              />
+            )}
+            {step === 'guide' && (
+              <GuideStep
+                category={category}
+                tips={tips}
+                currentTipIndex={currentTipIndex}
+                onNextTip={onNextTip}
+                monsterImage={monsterImage}
+                dirtOpacity={dirtOpacity}
+                showHelpBubble={false} // 말풍선은 Modal에서 직접 제어
+              />
+            )}
+            {step === 'naming' && (
+              <NamingStep
+                category={category}
+                monsterImage={monsterImage}
+                monsterName={monsterName}
+                monsterRank={monsterRank}
+                onNameChange={onNameChange}
+                onNameSubmit={onNameSubmit}
+                onRelease={onRelease}
+                showHelpBubble={showHelpBubble}
+              />
+            )}
+            {step === 'complete' && (
+              <CompleteStep
+                monsterName={monsterName}
+                monsterImage={monsterImage}
+                showThanksBubble={showThanksBubble}
+                onCaptureAgain={onCaptureAgain}
+                onGoToCollection={onGoToCollection}
+              />
+            )}
+            {step === 'error' && (
+              <ErrorStep
+                errorMessage={errorMessage}
+                onCaptureAgain={onCaptureAgain}
+              />
+            )}
+          </div>
+        </div>
+      </>
+    );
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {step === 'loading' ? (
-        <LoadingMiniGame loadingMessage={loadingMessage} capturedImage={capturedImage} />
-      ) : (
-        <>
-          {capturedImage && (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${capturedImage})`, filter: 'blur(20px) brightness(0.5)', transform: 'scale(1.1)' }}
-            />
-          )}
-          {!capturedImage && <div className="absolute inset-0 bg-black/70" />}
-
-          <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in relative z-10">
-            {renderStep()}
-          </div>
-        </>
-      )}
+      {renderContent()}
       <style jsx>{`
         @keyframes bounce-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+        @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+        .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
         @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
     </div>
   );

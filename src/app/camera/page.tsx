@@ -19,6 +19,7 @@ export default function CameraPage() {
     handleCapture,
     handleNameChange,
     handleNameSubmit,
+    handleStartGuide, // ✨ FIX: 누락된 핸들러 추가
     handleNextTip,
     handleRelease,
     handleCaptureAgain,
@@ -48,6 +49,7 @@ export default function CameraPage() {
         errorMessage={error}
         onNameChange={handleNameChange}
         onNameSubmit={handleNameSubmit}
+        onStartGuide={handleStartGuide} // ✨ FIX: prop으로 전달
         onNextTip={handleNextTip}
         onRelease={handleRelease}
         onGoToCollection={handleGoToCollection}
