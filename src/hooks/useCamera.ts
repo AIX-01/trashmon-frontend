@@ -98,7 +98,7 @@ export function useCamera(): UseCameraReturn {
   }, []);
 
   /**
-   * 사진 촬영
+   * 사진 촬영 - 화면에 보이는 영역만 캡처
    */
   const capturePhoto = useCallback((onCapture: (blob: Blob) => void) => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -108,9 +108,46 @@ export function useCamera(): UseCameraReturn {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // 비디오 원본 크기
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    // 화면에 표시되는 비디오 요소의 크기
+    const displayWidth = video.clientWidth;
+    const displayHeight = video.clientHeight;
+
+    // 비디오와 디스플레이의 비율 계산
+    const videoRatio = videoWidth / videoHeight;
+    const displayRatio = displayWidth / displayHeight;
+
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = videoWidth;
+    let sourceHeight = videoHeight;
+
+    // object-cover가 적용된 경우, 화면에 보이는 영역 계산
+    if (videoRatio > displayRatio) {
+      // 비디오가 더 넓음 → 좌우가 잘림
+      sourceWidth = videoHeight * displayRatio;
+      sourceX = (videoWidth - sourceWidth) / 2;
+    } else {
+      // 비디오가 더 높음 → 상하가 잘림
+      sourceHeight = videoWidth / displayRatio;
+      sourceY = (videoHeight - sourceHeight) / 2;
+    }
+
+    // 캔버스 크기는 실제 보이는 영역 비율로 설정 (최대 1080px)
+    const maxSize = 1080;
+    const scale = Math.min(maxSize / sourceWidth, maxSize / sourceHeight, 1);
+    canvas.width = Math.round(sourceWidth * scale);
+    canvas.height = Math.round(sourceHeight * scale);
+
+    // 화면에 보이는 영역만 캔버스에 그리기
+    context.drawImage(
+      video,
+      sourceX, sourceY, sourceWidth, sourceHeight,  // 소스 영역
+      0, 0, canvas.width, canvas.height              // 대상 영역
+    );
 
     canvas.toBlob((blob) => {
       if (blob) onCapture(blob);
