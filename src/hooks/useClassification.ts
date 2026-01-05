@@ -12,7 +12,7 @@ const LOADING_MESSAGES = [
   '거의 다 됐어요! 조금만 기다려주세요... ✨',
 ];
 
-type ModalStep = 'loading' | 'naming' | 'guide' | 'complete';
+type ModalStep = 'loading' | 'naming' | 'guide' | 'complete' | 'error';
 
 export function useClassification() {
   // 모달 상태
@@ -66,6 +66,10 @@ export function useClassification() {
     setResult(null);
     setCurrentTipIndex(0);
 
+    // 촬영된 이미지를 Base64로 변환하여 배경용으로 저장
+    const imageUrl = URL.createObjectURL(imageBlob);
+    setCapturedImage(imageUrl);
+
     try {
       const formData = new FormData();
       formData.append('file', imageBlob, 'capture.jpg');
@@ -92,7 +96,7 @@ export function useClassification() {
     } catch (err) {
       console.error('분류 요청 실패:', err);
       setError('몬스터를 찾는 데 실패했어요. 서버에 문제가 있나봐요!');
-      setIsModalOpen(false);
+      setModalStep('error');
     }
   }, []);
 
@@ -148,6 +152,7 @@ export function useClassification() {
     modalStep,
     loadingMessage,
     shouldRestartCamera,
+    capturedImage,
 
     // 데이터
     result,

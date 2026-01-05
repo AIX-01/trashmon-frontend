@@ -10,6 +10,7 @@ export default function CameraPage() {
     modalStep,
     loadingMessage,
     shouldRestartCamera,
+    capturedImage,
     result,
     monsterName,
     currentTipIndex,
@@ -29,14 +30,13 @@ export default function CameraPage() {
         onCapture={handleCapture}
         isDisabled={isModalOpen}
         shouldRestart={shouldRestartCamera}
-        error={error}
-        onErrorDismiss={handleErrorDismiss}
       />
 
       <CaptureModal
         isOpen={isModalOpen}
         step={modalStep}
         loadingMessage={loadingMessage}
+        capturedImage={capturedImage}
         category={result?.category || ''}
         monsterImage={result?.monster_image || ''}
         monsterName={monsterName}
@@ -44,6 +44,7 @@ export default function CameraPage() {
         binColor={result?.guide.bin_color || ''}
         message={result?.guide.message || ''}
         currentTipIndex={currentTipIndex}
+        errorMessage={error}
         onNameChange={handleNameChange}
         onNameSubmit={handleNameSubmit}
         onNextTip={handleNextTip}

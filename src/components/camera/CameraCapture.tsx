@@ -14,11 +14,9 @@ interface CameraCaptureProps {
   onCapture: (imageData: Blob) => void;
   isDisabled: boolean;
   shouldRestart: boolean;
-  error?: string;
-  onErrorDismiss: () => void;
 }
 
-export default function CameraCapture({ onCapture, isDisabled, shouldRestart, error, onErrorDismiss }: CameraCaptureProps) {
+export default function CameraCapture({ onCapture, isDisabled, shouldRestart }: CameraCaptureProps) {
   const router = useRouter();
   const { videoRef, canvasRef, isCameraReady, cameraError, startCamera, capturePhoto, stopCamera } = useCamera();
 
@@ -37,7 +35,7 @@ export default function CameraCapture({ onCapture, isDisabled, shouldRestart, er
     });
   };
 
-  const buttonDisabled = !isCameraReady || isDisabled || !!cameraError || !!error;
+  const buttonDisabled = !isCameraReady || isDisabled || !!cameraError;
 
   return (
     <div className="fixed inset-0 w-full h-full bg-black">
@@ -53,36 +51,25 @@ export default function CameraCapture({ onCapture, isDisabled, shouldRestart, er
       {/* 캔버스 (숨김) */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* 카메라 에러 */}
+      {/* 카메라 에러 - 모달 스타일 */}
       {cameraError && (
-        <div className="absolute inset-0 bg-yellow-50 flex flex-col items-center justify-center text-center p-6">
-          <p className="text-5xl mb-6">😭</p>
-          <p className="font-bold text-gray-800 text-lg">{cameraError}</p>
-          <button
-            onClick={startCamera}
-            className="mt-6 px-8 py-3 bg-green-500 text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
-          >
-            다시 시도
-          </button>
+        <div className="absolute inset-0 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-sm p-6 flex flex-col items-center shadow-2xl">
+            <div className="text-6xl mb-4">📷</div>
+            <p className="text-gray-800 text-xl font-bold text-center mb-2">
+              카메라 오류
+            </p>
+            <p className="text-gray-600 text-center mb-6">{cameraError}</p>
+            <button
+              onClick={startCamera}
+              className="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 rounded-2xl shadow-lg transition-all"
+            >
+              다시 시도
+            </button>
+          </div>
         </div>
       )}
 
-      {/* API 에러 */}
-      {error && !cameraError && (
-        <div className="absolute inset-0 bg-yellow-50 flex flex-col items-center justify-center text-center p-6">
-          <p className="text-5xl mb-6">😢</p>
-          <p className="font-bold text-gray-800 text-lg">{error}</p>
-          <button
-            onClick={() => {
-              onErrorDismiss();
-              startCamera();
-            }}
-            className="mt-6 px-8 py-3 bg-green-500 text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
-          >
-            다시 시도
-          </button>
-        </div>
-      )}
 
       {/* 상단 뒤로가기 버튼 */}
       <button
@@ -95,7 +82,7 @@ export default function CameraCapture({ onCapture, isDisabled, shouldRestart, er
       </button>
 
       {/* 촬영 버튼 */}
-      {!cameraError && !error && (
+      {!cameraError && (
         <div className="absolute bottom-0 left-0 right-0 pb-12 flex justify-center z-20">
           <button
             onClick={handleCapture}

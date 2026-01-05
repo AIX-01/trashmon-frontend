@@ -4,12 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-type ModalStep = 'loading' | 'naming' | 'guide' | 'complete';
+type ModalStep = 'loading' | 'naming' | 'guide' | 'complete' | 'error';
 
 interface CaptureModalProps {
   isOpen: boolean;
   step: ModalStep;
   loadingMessage: string;
+  capturedImage: string;
   category: string;
   monsterImage: string;
   monsterName: string;
@@ -17,6 +18,7 @@ interface CaptureModalProps {
   binColor: string;
   message: string;
   currentTipIndex: number;
+  errorMessage: string;
   onNameChange: (name: string) => void;
   onNameSubmit: () => void;
   onNextTip: () => void;
@@ -28,6 +30,7 @@ export default function CaptureModal({
   isOpen,
   step,
   loadingMessage,
+  capturedImage,
   category,
   monsterImage,
   monsterName,
@@ -35,6 +38,7 @@ export default function CaptureModal({
   binColor,
   message,
   currentTipIndex,
+  errorMessage,
   onNameChange,
   onNameSubmit,
   onNextTip,
@@ -44,9 +48,21 @@ export default function CaptureModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* 블러 처리된 촬영 이미지 배경 */}
+      {capturedImage && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${capturedImage})`,
+            filter: 'blur(20px) brightness(0.5)',
+            transform: 'scale(1.1)',
+          }}
+        />
+      )}
+      {!capturedImage && <div className="absolute inset-0 bg-black/70" />}
 
+      <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in relative z-10">
         {/* 로딩 단계 */}
         {step === 'loading' && (
           <div className="p-8 flex flex-col items-center justify-center min-h-[400px]">
@@ -166,6 +182,26 @@ export default function CaptureModal({
                 </button>
               </Link>
             </div>
+          </div>
+        )}
+
+        {/* 에러 단계 */}
+        {step === 'error' && (
+          <div className="p-6 flex flex-col items-center">
+            <div className="text-red-600 text-6xl mb-4">❌</div>
+            <p className="text-gray-800 text-2xl font-bold text-center mb-2">
+              오류가 발생했어요
+            </p>
+            <p className="text-gray-600 text-center mb-8">
+              {errorMessage}
+            </p>
+
+            <button
+              onClick={onCaptureAgain}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold py-4 rounded-2xl shadow-lg transition-all"
+            >
+              다시 시도하기
+            </button>
           </div>
         )}
       </div>
