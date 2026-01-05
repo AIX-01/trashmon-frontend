@@ -7,7 +7,7 @@ import { MonsterRank } from '@/types';
 
 interface HoloCardProps {
   category: string;
-  monsterName?: string;
+  monsterName: string;
   imageUrl: string;
   date?: string;
   rank: MonsterRank;
@@ -101,7 +101,7 @@ export default function HoloCard({ category, monsterName, imageUrl, date = '2024
             
             {/* Header / Name */}
             <div className={`h-14 ${rankStyle.headerBg} flex items-center justify-between px-4 border-b-4 ${rankStyle.borderColor} z-10`}>
-              <span className={`${rankStyle.headerText} font-bold text-xl drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]`}>{monsterName || category}</span>
+              <span className={`${rankStyle.headerText} font-bold text-xl drop-shadow-[0_2px_2px_rgba(255,255,255,0.8)]`}>{monsterName}</span>
               <span className={`text-white text-xs ${rankStyle.rankBadge} px-2.5 py-1 rounded-full font-bold shadow-md`}>
                 {rankStyle.rank}급
               </span>
@@ -117,7 +117,7 @@ export default function HoloCard({ category, monsterName, imageUrl, date = '2024
                <div className="z-20 relative w-36 h-36 transform hover:scale-110 transition-transform duration-300">
                  <Image
                    src={imageUrl}
-                   alt={monsterName || category}
+                   alt={monsterName}
                    fill
                    className="object-contain drop-shadow-xl"
                    unoptimized
@@ -134,7 +134,7 @@ export default function HoloCard({ category, monsterName, imageUrl, date = '2024
                  <span className="text-slate-700 text-xs font-semibold">{date}</span>
                </div>
                <p className="text-sm leading-snug text-slate-800 font-semibold mb-1">
-                  자연을 사랑하는 {monsterName || category}!
+                  자연을 사랑하는 {monsterName}!
                   분리수거를 통해 지구를 지켜주세요.
                </p>
                <div className="mt-1 flex justify-end">
@@ -149,7 +149,7 @@ export default function HoloCard({ category, monsterName, imageUrl, date = '2024
 
         {/* BACK (PASTEL THEME WITH RANK DIFFERENTIATION) */}
         <div className={`holo-card-face holo-card-back bg-white border-8 ${rankStyle.backBorder} flex flex-col p-6 items-center justify-center text-center`} style={{ borderRadius: '23px' }}>
-          <h2 className={`text-3xl font-bold mb-6 ${rankStyle.backHeader}`}>{monsterName || category}</h2>
+          <h2 className={`text-3xl font-bold mb-6 ${rankStyle.backHeader}`}>{monsterName}</h2>
 
           <div className="space-y-6 w-full">
              <div className="bg-sky-50 p-4 rounded-2xl border border-sky-100">

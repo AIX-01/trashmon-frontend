@@ -12,7 +12,7 @@ import { Sun, Cloud, ArrowLeft, ArrowDownUp } from 'lucide-react';
 interface CharacterWithUrl {
   id: number;
   category: string;
-  monsterName?: string;
+  monsterName: string;
   imageUrl: string;
   date: string;
   rawDate: Date;

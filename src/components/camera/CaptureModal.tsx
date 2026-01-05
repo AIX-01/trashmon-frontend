@@ -124,7 +124,7 @@ export default function CaptureModal({
               type="text"
               value={monsterName}
               onChange={(e) => onNameChange(e.target.value)}
-              placeholder="몬스터 이름"
+              placeholder="몬스터 이름 (필수)"
               className="w-full px-4 py-3 border-2 border-green-300 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-green-500 mb-4"
               maxLength={10}
             />
@@ -132,7 +132,12 @@ export default function CaptureModal({
             <div className="w-full space-y-3">
               <button
                 onClick={onNameSubmit}
-                className="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 rounded-2xl shadow-lg transition-all"
+                disabled={!monsterName.trim()}
+                className={`w-full text-xl font-bold py-4 rounded-2xl shadow-lg transition-all ${
+                  monsterName.trim() 
+                    ? 'bg-green-500 hover:bg-green-600 text-white' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 이름 정하기
               </button>

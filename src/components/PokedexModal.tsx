@@ -9,7 +9,7 @@ import { createImageUrl } from '@/lib/collectionStorage';
 interface MonsterWithUrl {
   id: number;
   category: string;
-  monsterName?: string;
+  monsterName: string;
   imageUrl: string;
   rank: MonsterRank;
 }
