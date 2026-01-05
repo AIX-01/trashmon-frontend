@@ -155,7 +155,6 @@ export default function CaptureModal({
             </div>
 
             <div className="flex-1 min-h-[200px]">
-              <p className="text-gray-500 text-sm mb-3">💡 분리수거 팁</p>
               <div className="space-y-3">
                 {tips.slice(0, currentTipIndex + 1).map((tip, idx) => (
                   <div
