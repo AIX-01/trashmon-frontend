@@ -13,20 +13,21 @@ import { useCamera } from '@/hooks/useCamera';
 interface CameraCaptureProps {
   onCapture: (imageData: Blob) => void;
   isDisabled: boolean;
+  shouldRestart: boolean;
   error?: string;
   onErrorDismiss: () => void;
 }
 
-export default function CameraCapture({ onCapture, isDisabled, error, onErrorDismiss }: CameraCaptureProps) {
+export default function CameraCapture({ onCapture, isDisabled, shouldRestart, error, onErrorDismiss }: CameraCaptureProps) {
   const router = useRouter();
   const { videoRef, canvasRef, isCameraReady, cameraError, startCamera, capturePhoto, stopCamera } = useCamera();
 
-  // 모달이 닫히면 (isDisabled가 false가 되면) 카메라 재시작
+  // shouldRestart가 true가 되면 카메라 재시작
   useEffect(() => {
-    if (!isDisabled && !isCameraReady && !cameraError) {
+    if (shouldRestart && !isCameraReady && !cameraError) {
       startCamera();
     }
-  }, [isDisabled, isCameraReady, cameraError, startCamera]);
+  }, [shouldRestart, isCameraReady, cameraError, startCamera]);
 
   const handleCapture = () => {
     if (isDisabled || !isCameraReady) return;

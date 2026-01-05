@@ -9,6 +9,7 @@ export default function CameraPage() {
     isModalOpen,
     modalStep,
     loadingMessage,
+    shouldRestartCamera,
     result,
     monsterName,
     currentTipIndex,
@@ -27,6 +28,7 @@ export default function CameraPage() {
       <CameraCapture
         onCapture={handleCapture}
         isDisabled={isModalOpen}
+        shouldRestart={shouldRestartCamera}
         error={error}
         onErrorDismiss={handleErrorDismiss}
       />

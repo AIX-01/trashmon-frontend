@@ -16,11 +16,16 @@ export function useCamera(): UseCameraReturn {
   const streamRef = useRef<MediaStream | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState<string>('');
+  const isStartingRef = useRef(false);
 
   /**
    * 카메라 스트림 시작
    */
   const startCamera = useCallback(async () => {
+    // 이미 시작 중이면 무시
+    if (isStartingRef.current) return;
+    isStartingRef.current = true;
+
     // 기존 스트림 정리
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -33,6 +38,7 @@ export function useCamera(): UseCameraReturn {
     // 브라우저 지원 체크
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraError('이 브라우저는 카메라를 지원하지 않아요. 다른 브라우저를 사용해주세요!');
+      isStartingRef.current = false;
       return;
     }
 
@@ -43,6 +49,7 @@ export function useCamera(): UseCameraReturn {
 
       if (videoDevices.length === 0) {
         setCameraError('카메라를 찾을 수 없어요. 카메라가 연결되어 있는지 확인해주세요!');
+        isStartingRef.current = false;
         return;
       }
 
@@ -60,6 +67,7 @@ export function useCamera(): UseCameraReturn {
             videoRef.current.srcObject = mediaStream;
             await videoRef.current.play();
           }
+          isStartingRef.current = false;
           return;
         } catch {
           // 다음 장치 시도
@@ -86,6 +94,7 @@ export function useCamera(): UseCameraReturn {
         setCameraError('카메라를 켤 수 없어요. 권한을 허용했는지 확인해주세요!');
       }
     }
+    isStartingRef.current = false;
   }, []);
 
   /**
@@ -138,7 +147,7 @@ export function useCamera(): UseCameraReturn {
     }
   }, [handleCanPlay]);
 
-  // 컴포넌트 마운트/언마운트 시 카메라 관리
+  // 컴포넌트 마운트 시 카메라 시작
   useEffect(() => {
     startCamera();
     return () => {
@@ -147,7 +156,8 @@ export function useCamera(): UseCameraReturn {
         streamRef.current = null;
       }
     };
-  }, [startCamera]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     videoRef,

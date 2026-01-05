@@ -18,6 +18,8 @@ export function useClassification() {
   // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalStep, setModalStep] = useState<ModalStep>('loading');
+  const [shouldRestartCamera, setShouldRestartCamera] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string>('');
 
   // 로딩 상태
   const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
@@ -57,6 +59,7 @@ export function useClassification() {
 
   // 촬영 및 API 요청
   const handleCapture = useCallback(async (imageBlob: Blob) => {
+    setShouldRestartCamera(false);
     setIsModalOpen(true);
     setModalStep('loading');
     setError('');
@@ -125,6 +128,7 @@ export function useClassification() {
     setMonsterName('');
     setCurrentTipIndex(0);
     setModalStep('loading');
+    setShouldRestartCamera(true);
   }, []);
 
   // 도감으로 이동
@@ -143,6 +147,7 @@ export function useClassification() {
     isModalOpen,
     modalStep,
     loadingMessage,
+    shouldRestartCamera,
 
     // 데이터
     result,
