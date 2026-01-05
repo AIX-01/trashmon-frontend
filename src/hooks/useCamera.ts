@@ -12,7 +12,7 @@ interface UseCameraReturn {
 export function useCamera(): UseCameraReturn {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState<string>('');
 
@@ -20,30 +20,72 @@ export function useCamera(): UseCameraReturn {
    * 카메라 스트림 시작
    */
   const startCamera = useCallback(async () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+    // 기존 스트림 정리
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
     }
 
     setCameraError('');
+    setIsCameraReady(false);
+
+    // 브라우저 지원 체크
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError('이 브라우저는 카메라를 지원하지 않아요. 다른 브라우저를 사용해주세요!');
+      return;
+    }
+
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: 'environment',
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-        },
-        audio: false,
-      });
+      // 카메라 장치 목록 확인
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+
+      if (videoDevices.length === 0) {
+        setCameraError('카메라를 찾을 수 없어요. 카메라가 연결되어 있는지 확인해주세요!');
+        return;
+      }
+
+      // deviceId로 카메라 시도
+      for (const device of videoDevices) {
+        try {
+          const constraints: MediaStreamConstraints = device.deviceId
+            ? { video: { deviceId: device.deviceId }, audio: false }
+            : { video: true, audio: false };
+
+          const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+          streamRef.current = mediaStream;
+
+          if (videoRef.current) {
+            videoRef.current.srcObject = mediaStream;
+            await videoRef.current.play();
+          }
+          return;
+        } catch {
+          // 다음 장치 시도
+        }
+      }
+
+      // fallback: 기본 설정
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      streamRef.current = mediaStream;
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        setStream(mediaStream);
+        await videoRef.current.play();
       }
     } catch (err) {
-      console.error('카메라 시작 실패:', err);
-      setCameraError('카메라를 켤 수 없어요. 권한을 허용했는지 확인해주세요!');
+      const error = err as Error;
+      if (error.name === 'NotAllowedError') {
+        setCameraError('카메라 권한이 거부되었어요. 브라우저 설정에서 권한을 허용해주세요!');
+      } else if (error.name === 'NotFoundError') {
+        setCameraError('카메라를 찾을 수 없어요. 카메라가 연결되어 있는지 확인해주세요!');
+      } else if (error.name === 'NotReadableError') {
+        setCameraError('카메라가 다른 앱에서 사용 중이에요. 다른 앱을 종료해주세요!');
+      } else {
+        setCameraError('카메라를 켤 수 없어요. 권한을 허용했는지 확인해주세요!');
+      }
     }
-  }, [stream]);
+  }, []);
 
   /**
    * 사진 촬영
@@ -85,11 +127,12 @@ export function useCamera(): UseCameraReturn {
   useEffect(() => {
     startCamera();
     return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
     };
-  }, []);
+  }, [startCamera]);
 
   return {
     videoRef,
