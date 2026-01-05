@@ -6,9 +6,9 @@ import { useTTS } from '@/hooks/useTTS';
 
 // 말풍선 컴포넌트
 const SpeechBubble = ({ text }: { text: string }) => (
-  <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-white text-gray-800 px-4 py-2 rounded-2xl shadow-md text-center font-jua text-sm animate-fade-in-up whitespace-nowrap">
+  <div className="absolute -top-20 left-1/2 -translate-x-1/2 bg-white text-gray-800 px-6 py-3 rounded-3xl shadow-lg text-center font-jua text-xl animate-fade-in-up whitespace-nowrap z-30 border-2 border-gray-100">
     {text}
-    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white" />
+    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[12px] border-x-transparent border-t-[12px] border-t-white" />
   </div>
 );
 
@@ -188,9 +188,9 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
           }}
         >
           <div className="relative">
-            <Wand2 className="w-12 h-12 text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
-            <div className="absolute -top-2 -right-2 w-4 h-4 bg-white rounded-full animate-ping opacity-75" />
-            <div className="absolute top-0 right-0 w-2 h-2 bg-blue-200 rounded-full animate-pulse" />
+            <Wand2 className="w-16 h-16 text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full animate-ping opacity-75" />
+            <div className="absolute top-0 right-0 w-3 h-3 bg-blue-200 rounded-full animate-pulse" />
           </div>
         </div>
       )}
@@ -222,23 +222,23 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         </div>
         {clouds.map((cloud, i) => (
           <div key={i} className="absolute text-white animate-drift pointer-events-none" style={{...cloud}}>
-            <Cloud fill="white" size={60 + i * 20} className="drop-shadow-md text-sky-100" />
+            <Cloud fill="white" size={80 + i * 20} className="drop-shadow-md text-sky-100" />
           </div>
         ))}
         <div className="absolute bottom-0 left-0 w-full h-32 pointer-events-none z-0">
            <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-green-500 to-green-400 rounded-t-[50px] shadow-[0_-10px_20px_rgba(0,0,0,0.1)]"></div>
            {[...Array(8)].map((_, i) => (
-              <div key={i} className="absolute bottom-4 text-pink-300 animate-sway" style={{ left: `${5 + i * 12}%`, animationDelay: `${i * 0.7}s`, fontSize: '24px' }}>✿</div>
+              <div key={i} className="absolute bottom-4 text-pink-300 animate-sway" style={{ left: `${5 + i * 12}%`, animationDelay: `${i * 0.7}s`, fontSize: '32px' }}>✿</div>
            ))}
         </div>
       </div>
 
       {/* 상단 메시지 */}
-      <div className={`absolute top-8 left-0 right-0 flex flex-col items-center pointer-events-none z-30 px-4 transition-all duration-1000 ${gameState === 'turning' ? 'translate-y-[-20px] opacity-0' : 'translate-y-0 opacity-100'}`}>
-        <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-full border border-green-200 shadow-lg animate-pulse">
-          <p className="text-green-800 text-lg font-bold text-center drop-shadow-sm font-jua">{loadingMessage}</p>
+      <div className={`absolute top-12 left-0 right-0 flex flex-col items-center pointer-events-none z-30 px-4 transition-all duration-1000 ${gameState === 'turning' ? 'translate-y-[-20px] opacity-0' : 'translate-y-0 opacity-100'}`}>
+        <div className="bg-white/80 backdrop-blur-md px-8 py-4 rounded-full border-2 border-green-200 shadow-xl animate-pulse">
+          <p className="text-green-800 text-2xl font-bold text-center drop-shadow-sm font-jua">{loadingMessage}</p>
         </div>
-        <p className="text-gray-600 text-sm mt-2 font-medium drop-shadow-sm text-center animate-bounce bg-white/50 px-3 py-1 rounded-full font-jua">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
+        <p className="text-gray-600 text-lg mt-4 font-medium drop-shadow-sm text-center animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
       </div>
 
       {/* 둥둥 떠다니는 타겟 */}
@@ -247,11 +247,11 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         className={`absolute transition-all duration-[2000ms] ease-in-out z-10 ${isTargetHit ? 'scale-110 brightness-110' : 'scale-100'} ${gameState === 'turning' ? 'opacity-0 scale-0' : 'opacity-100 scale-100'}`}
         style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%`, transform: 'translate(-50%, -50%)', transitionProperty: 'left, top, transform, opacity, filter' }}
       >
-        <div className="relative w-64 h-64 animate-float">
+        <div className="relative w-72 h-72 animate-float">
           {/* 말풍선 표시 */}
           {showBubble && <SpeechBubble text={bubbleText} />}
           
-          <div className="w-full h-full animate-blob-morph overflow-hidden shadow-2xl border-4 border-white/50 bg-white/20 backdrop-blur-sm relative">
+          <div className="w-full h-full animate-blob-morph overflow-hidden shadow-2xl border-[6px] border-white/50 bg-white/20 backdrop-blur-sm relative">
              <div className="w-full h-full bg-cover bg-center transform scale-125" style={{ backgroundImage: `url(${capturedImage})` }} />
              
              {/* 흙먼지 효과 (CSS Gradient) */}
@@ -277,7 +277,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
           </div>
           {isTargetHit && <div className="absolute inset-0 bg-white/50 rounded-full animate-ping blur-xl" />}
           {score > 0 && (
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-blue-400 text-white px-3 py-1 rounded-full font-bold text-sm shadow-lg whitespace-nowrap animate-fade-in-up z-20 border-2 border-white font-jua">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-blue-400 text-white px-5 py-2 rounded-full font-bold text-xl shadow-lg whitespace-nowrap animate-fade-in-up z-20 border-4 border-white font-jua">
               ✨ {score} CLEAN!
             </div>
           )}
@@ -288,12 +288,12 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
       {balls.map(ball => (
         <div
           key={ball.id}
-          className="absolute w-12 h-12 z-20 pointer-events-none"
+          className="absolute w-16 h-16 z-20 pointer-events-none"
           style={{ left: ball.startX, top: ball.startY, '--target-x': `${ball.targetX}px`, '--target-y': `${ball.targetY}px`, animation: 'throwBall 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' } as React.CSSProperties}
           onAnimationEnd={() => { handleHit(ball.targetX, ball.targetY); setBalls(prev => prev.filter(b => b.id !== ball.id)); }}
         >
           <div className="w-full h-full flex items-center justify-center animate-spin">
-            <span className="text-3xl select-none drop-shadow-md">💧</span>
+            <span className="text-5xl select-none drop-shadow-lg">💧</span>
           </div>
         </div>
       ))}
@@ -302,7 +302,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
       {particles.map(p => (
         <div
           key={p.id}
-          className="absolute w-3 h-3 rounded-full shadow-sm z-10 pointer-events-none"
+          className="absolute w-4 h-4 rounded-full shadow-sm z-10 pointer-events-none"
           style={{ left: p.x, top: p.y, backgroundColor: p.color, '--angle': `${p.angle}deg`, '--distance': `${p.distance}px`, animation: 'explode 0.6s ease-out forwards' } as React.CSSProperties}
         />
       ))}
