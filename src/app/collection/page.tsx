@@ -267,11 +267,25 @@ const FarmPage = () => {
               {filteredCharacters.map((char) => (
                  <div key={char.id} className="transform hover:-translate-y-2 transition-transform duration-300">
                     <HoloCard
+                       id={char.id}
                        category={char.category}
                        monsterName={char.monsterName}
                        imageUrl={char.imageUrl}
                        date={char.date}
                        rank={char.rank}
+                       onNameUpdate={async (newName) => {
+                         try {
+                           const { updateCollectionItem } = await import('@/lib/collectionStorage');
+                           await updateCollectionItem(char.id, { monsterName: newName });
+                           
+                           setCharacters(prev => prev.map(c => 
+                             c.id === char.id ? { ...c, monsterName: newName } : c
+                           ));
+                         } catch (e) {
+                           console.error('이름 수정 실패', e);
+                           alert('이름 수정에 실패했어요.');
+                         }
+                       }}
                     />
                  </div>
               ))}

@@ -53,6 +53,18 @@ export async function getAllCollection(): Promise<CollectionItem[]> {
 }
 
 /**
+ * 도감 아이템 업데이트
+ */
+export async function updateCollectionItem(id: number, updates: Partial<Omit<CollectionItem, 'id'>>): Promise<void> {
+  try {
+    await db.collection.update(id, updates);
+  } catch (e) {
+    console.error('도감 업데이트 실패:', e);
+    throw e;
+  }
+}
+
+/**
  * 도감 초기화
  */
 export async function clearCollection(): Promise<void> {

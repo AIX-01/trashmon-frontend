@@ -22,7 +22,7 @@ export const CATEGORY_GUIDES: Record<string, CategoryGuide> = {
 
 // 카테고리로 가이드 조회
 export function getGuideByCategory(category: string): CategoryGuide {
-  return CATEGORY_GUIDES[category];
+  return CATEGORY_GUIDES[category] || CATEGORY_GUIDES['일반쓰레기'];
 }
 
 /**
