@@ -15,7 +15,6 @@ export interface CollectionItem {
 
 // 분류 가이드 (프론트엔드 하드코딩)
 export interface CategoryGuide {
-  bin_color: string;          // 분리수거함 색상
   message: string;            // 안내 메시지
   tips: string[];             // 분리수거 팁
 }

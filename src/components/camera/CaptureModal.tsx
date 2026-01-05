@@ -24,7 +24,6 @@ interface CaptureModalProps {
   monsterName: string;
   monsterRank: MonsterRank;
   tips: string[];
-  binColor: string;
   message: string;
   currentTipIndex: number;
   errorMessage: string;
@@ -46,7 +45,6 @@ export default function CaptureModal({
   monsterName,
   monsterRank,
   tips,
-  binColor,
   message,
   currentTipIndex,
   errorMessage,
@@ -156,9 +154,6 @@ export default function CaptureModal({
           <div className="p-6 flex flex-col">
             <div className="bg-gradient-to-r from-green-400 to-green-500 -mx-6 -mt-6 px-6 py-4 mb-6">
               <p className="text-white text-center font-bold text-lg">{message}</p>
-              <p className="text-green-100 text-center text-sm mt-1">
-                {binColor} 분리수거함에 버려주세요
-              </p>
             </div>
 
             <div className="flex-1 min-h-[200px]">
