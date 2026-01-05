@@ -12,11 +12,12 @@ import { useCamera } from '@/hooks/useCamera';
 interface CameraCaptureProps {
   onCapture: (imageData: Blob) => void;
   isLoading: boolean;
+  loadingMessage?: string;
   error?: string;
   onErrorDismiss: () => void;
 }
 
-export default function CameraCapture({ onCapture, isLoading, error, onErrorDismiss }: CameraCaptureProps) {
+export default function CameraCapture({ onCapture, isLoading, loadingMessage, error, onErrorDismiss }: CameraCaptureProps) {
   const router = useRouter();
   const { videoRef, canvasRef, isCameraReady, cameraError, startCamera, capturePhoto } = useCamera();
 
@@ -40,9 +41,20 @@ export default function CameraCapture({ onCapture, isLoading, error, onErrorDism
 
       {/* 로딩 오버레이 */}
       {isLoading && (
-        <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center backdrop-blur-sm z-10">
-          <p className="text-5xl animate-bounce">♻️</p>
-          <p className="text-dark-text text-xl font-bold mt-4">쓰레기 친구를 분석하고 있어요!</p>
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-yellow-light to-white flex flex-col items-center justify-center backdrop-blur-sm z-10">
+          <div className="relative">
+            <p className="text-7xl animate-bounce">🎨</p>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 bg-black/10 rounded-full blur-sm animate-pulse"></div>
+          </div>
+          <p className="text-dark-text text-xl font-bold mt-6 text-center px-8 animate-fade-in">
+            {loadingMessage || '잠시만 기다려주세요...'}
+          </p>
+          <div className="mt-6 flex gap-2">
+            <span className="w-3 h-3 bg-brand-green rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+            <span className="w-3 h-3 bg-brand-green rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+            <span className="w-3 h-3 bg-brand-green rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+          </div>
+          <p className="text-gray-500 text-sm mt-4">몬스터 생성에 10~20초 정도 걸려요</p>
         </div>
       )}
 

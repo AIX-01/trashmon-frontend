@@ -8,6 +8,7 @@ import { useClassification } from '@/hooks/useClassification';
 export default function CameraPage() {
   const {
     isLoading,
+    loadingMessage,
     result,
     error,
     isGuideComplete,
@@ -22,6 +23,7 @@ export default function CameraPage() {
       <CameraCapture
         onCapture={handleCapture}
         isLoading={isLoading}
+        loadingMessage={loadingMessage}
         error={error}
         onErrorDismiss={handleReset}
       />

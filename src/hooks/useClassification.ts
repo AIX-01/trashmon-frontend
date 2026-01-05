@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { ApiResponse, ClassificationResult } from '@/types';
 import { saveToCollection } from '@/lib/collectionStorage';
 import { getGuideByCategory } from '@/lib/monsters';
@@ -6,11 +6,45 @@ import { getGuideByCategory } from '@/lib/monsters';
 // API 서버 주소
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// 로딩 단계별 메시지
+const LOADING_MESSAGES = [
+  '쓰레기를 분석하고 있어요... 🔍',
+  '어떤 종류인지 알아보는 중... 🤔',
+  '몬스터 친구를 그리고 있어요... 🎨',
+  '거의 다 됐어요! 조금만 기다려주세요... ✨',
+];
+
 export function useClassification() {
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [error, setError] = useState<string>('');
   const [isGuideComplete, setIsGuideComplete] = useState(false);
+  const messageIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 로딩 중일 때 메시지 순환
+  useEffect(() => {
+    if (isLoading) {
+      let messageIndex = 0;
+      setLoadingMessage(LOADING_MESSAGES[0]);
+
+      messageIntervalRef.current = setInterval(() => {
+        messageIndex = Math.min(messageIndex + 1, LOADING_MESSAGES.length - 1);
+        setLoadingMessage(LOADING_MESSAGES[messageIndex]);
+      }, 3000); // 3초마다 메시지 변경
+    } else {
+      if (messageIntervalRef.current) {
+        clearInterval(messageIntervalRef.current);
+        messageIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (messageIntervalRef.current) {
+        clearInterval(messageIntervalRef.current);
+      }
+    };
+  }, [isLoading]);
 
   /**
    * 이미지 촬영 후 분류 요청
@@ -71,6 +105,7 @@ export function useClassification() {
 
   return {
     isLoading,
+    loadingMessage,
     result,
     error,
     isGuideComplete,
