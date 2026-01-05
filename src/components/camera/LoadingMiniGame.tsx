@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Sun, Cloud } from 'lucide-react';
+import { Sun, Cloud, Wand2 } from 'lucide-react';
 import { useTTS } from '@/hooks/useTTS';
 
 // 말풍선 컴포넌트
@@ -51,6 +51,8 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
   const [startTurn, setStartTurn] = useState(false);
   const [targetPos, setTargetPos] = useState({ x: 50, y: 40 });
   const targetRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [hasMouse, setHasMouse] = useState(false);
   
   // 말풍선 상태
   const [bubbleText, setBubbleText] = useState('');
@@ -116,6 +118,16 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     return () => clearInterval(interval);
   }, []);
 
+  // 마우스 이동 추적
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+      if (!hasMouse) setHasMouse(true);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [hasMouse]);
+
   // 터치 핸들러
   const handleTouch = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (gameState === 'turning') return;
@@ -156,12 +168,33 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     }
   }, [particles]);
 
+  // 더러움 정도 계산 (점수가 높을수록 투명해짐)
+  const dirtOpacity = Math.max(0, 1 - score * 0.15);
+
   return (
     <div 
-      className="absolute inset-0 z-20 overflow-hidden cursor-pointer select-none touch-manipulation bg-gradient-to-b from-sky-300 via-sky-200 to-blue-100"
+      className={`absolute inset-0 z-20 overflow-hidden select-none touch-manipulation bg-gradient-to-b from-sky-300 via-sky-200 to-blue-100 ${hasMouse ? 'cursor-none' : ''}`}
       onClick={handleTouch}
       onTouchStart={handleTouch}
     >
+      {/* 마법봉 커서 */}
+      {hasMouse && (
+        <div 
+          className="fixed pointer-events-none z-[100] transition-transform duration-75"
+          style={{ 
+            left: mousePos.x, 
+            top: mousePos.y,
+            transform: 'translate(-10%, -10%) rotate(-15deg)'
+          }}
+        >
+          <div className="relative">
+            <Wand2 className="w-12 h-12 text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
+            <div className="absolute -top-2 -right-2 w-4 h-4 bg-white rounded-full animate-ping opacity-75" />
+            <div className="absolute top-0 right-0 w-2 h-2 bg-blue-200 rounded-full animate-pulse" />
+          </div>
+        </div>
+      )}
+
       {/* 책 넘기기 효과 */}
       <div 
         className="absolute inset-0 z-[60] origin-left bg-black shadow-2xl"
@@ -218,13 +251,34 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
           {/* 말풍선 표시 */}
           {showBubble && <SpeechBubble text={bubbleText} />}
           
-          <div className="w-full h-full animate-blob-morph overflow-hidden shadow-2xl border-4 border-white/50 bg-white/20 backdrop-blur-sm">
+          <div className="w-full h-full animate-blob-morph overflow-hidden shadow-2xl border-4 border-white/50 bg-white/20 backdrop-blur-sm relative">
              <div className="w-full h-full bg-cover bg-center transform scale-125" style={{ backgroundImage: `url(${capturedImage})` }} />
+             
+             {/* 흙먼지 효과 (CSS Gradient) */}
+             <div 
+               className="absolute inset-0 transition-opacity duration-500 pointer-events-none z-10"
+               style={{ 
+                 opacity: dirtOpacity,
+                 background: `
+                   radial-gradient(circle at 20% 30%, rgba(60, 50, 40, 0.9) 0%, transparent 30%),
+                   radial-gradient(circle at 70% 60%, rgba(70, 60, 50, 0.8) 0%, transparent 35%),
+                   radial-gradient(circle at 40% 80%, rgba(50, 40, 30, 0.9) 0%, transparent 25%),
+                   radial-gradient(circle at 80% 20%, rgba(80, 70, 60, 0.8) 0%, transparent 30%),
+                   radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 100%)
+                 `,
+                 mixBlendMode: 'multiply'
+               }}
+             />
+             {/* 전체적인 톤 다운 (먼지 낀 느낌) */}
+             <div 
+               className="absolute inset-0 bg-stone-700/50 mix-blend-hard-light transition-opacity duration-500 pointer-events-none z-10"
+               style={{ opacity: dirtOpacity }}
+             />
           </div>
           {isTargetHit && <div className="absolute inset-0 bg-white/50 rounded-full animate-ping blur-xl" />}
           {score > 0 && (
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-sm shadow-lg whitespace-nowrap animate-fade-in-up z-20 border-2 border-white font-jua">
-              ⚡ {score} HIT!
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-blue-400 text-white px-3 py-1 rounded-full font-bold text-sm shadow-lg whitespace-nowrap animate-fade-in-up z-20 border-2 border-white font-jua">
+              ✨ {score} CLEAN!
             </div>
           )}
         </div>
@@ -238,8 +292,8 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
           style={{ left: ball.startX, top: ball.startY, '--target-x': `${ball.targetX}px`, '--target-y': `${ball.targetY}px`, animation: 'throwBall 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' } as React.CSSProperties}
           onAnimationEnd={() => { handleHit(ball.targetX, ball.targetY); setBalls(prev => prev.filter(b => b.id !== ball.id)); }}
         >
-          <div className="w-full h-full bg-gradient-to-br from-green-400 to-emerald-600 rounded-full shadow-lg border-2 border-white flex items-center justify-center animate-spin">
-            <span className="text-xl select-none">🍃</span>
+          <div className="w-full h-full flex items-center justify-center animate-spin">
+            <span className="text-3xl select-none drop-shadow-md">💧</span>
           </div>
         </div>
       ))}
