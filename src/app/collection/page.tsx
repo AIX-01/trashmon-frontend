@@ -186,7 +186,7 @@ const FarmPage = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
            <div className="flex items-center gap-4">
-              <Link href="/" className="bg-white hover:bg-green-50 text-green-600 p-3 rounded-2xl transition shadow-lg border-2 border-green-200 group">
+              <Link href="/app" className="bg-white hover:bg-green-50 text-green-600 p-3 rounded-2xl transition shadow-lg border-2 border-green-200 group">
                  <ArrowLeft size={32} className="group-hover:-translate-x-1 transition-transform" />
               </Link>
               <h1 className="text-5xl md:text-6xl font-bold text-white tracking-wide drop-shadow-[0_4px_0_rgba(0,0,0,0.2)] text-stroke-3">
