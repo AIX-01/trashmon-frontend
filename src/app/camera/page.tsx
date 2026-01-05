@@ -1,8 +1,8 @@
 'use client';
 
-import CameraCapture from '@/components/CameraCapture';
-import ResultDisplay from '@/components/ResultDisplay';
-import CompletionMessage from '@/components/CompletionMessage';
+import CameraCapture from '@/components/camera/CameraCapture';
+import ResultDisplay from '@/components/camera/ResultDisplay';
+import CompletionMessage from '@/components/camera/CompletionMessage';
 import { useClassification } from '@/hooks/useClassification';
 
 export default function CameraPage() {
