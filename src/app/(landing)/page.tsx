@@ -5,7 +5,6 @@ import {
   HeroSection,
   FeaturesSection,
   EducationSection,
-  ReviewsSection,
   CTASection,
   Footer,
 } from '@/components/landing';
@@ -34,7 +33,6 @@ export default function LandingPage() {
       <HeroSection />
       <FeaturesSection />
       <EducationSection />
-      <ReviewsSection />
       <CTASection />
       <Footer />
     </div>

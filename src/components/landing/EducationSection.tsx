@@ -1,4 +1,5 @@
 import { CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
 export default function EducationSection() {
   return (
@@ -8,8 +9,8 @@ export default function EducationSection() {
           <div className="flex-1 order-2 md:order-1">
             <div className="bg-white p-6 rounded-3xl shadow-xl transform rotate-2 relative">
               <div className="absolute -top-4 -left-4 bg-yellow-400 text-white font-bold px-4 py-2 rounded-lg shadow-lg">STEP 1</div>
-              <div className="h-48 bg-sky-100 rounded-2xl flex items-center justify-center">
-                <span className="font-jua text-sky-400 text-2xl">📷 사진 찍기 놀이</span>
+              <div className="h-64 bg-sky-100 rounded-2xl flex items-center justify-center p-4">
+                <Image src="/General_Waste.png" alt="일반 쓰레기 몬스터" width={200} height={200} className="object-contain" />
               </div>
             </div>
           </div>
@@ -47,8 +48,11 @@ export default function EducationSection() {
           <div className="flex-1">
             <div className="bg-white p-6 rounded-3xl shadow-xl transform -rotate-2 relative">
               <div className="absolute -top-4 -right-4 bg-green-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg">STEP 2</div>
-              <div className="h-48 bg-green-100 rounded-2xl flex items-center justify-center">
-                <span className="font-jua text-green-500 text-2xl">♻️ 분리해서 버리기</span>
+              <div className="h-64 bg-green-100 rounded-2xl grid grid-cols-2 gap-4 p-4">
+                <Image src="/Can.png" alt="캔 몬스터" width={100} height={100} className="object-contain w-full h-full" />
+                <Image src="/Plastic.png" alt="플라스틱 몬스터" width={100} height={100} className="object-contain w-full h-full" />
+                <Image src="/Paper.png" alt="종이 몬스터" width={100} height={100} className="object-contain w-full h-full" />
+                <Image src="/Glass.png" alt="유리 몬스터" width={100} height={100} className="object-contain w-full h-full" />
               </div>
             </div>
           </div>

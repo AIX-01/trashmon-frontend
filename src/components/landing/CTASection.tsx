@@ -15,7 +15,7 @@ export default function CTASection() {
           환경을 생각하는 마음이 무럭무럭 자라납니다.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/app" className="bg-white hover:bg-gray-100 text-green-600 text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+          <Link href="/camera" className="bg-white hover:bg-gray-100 text-green-600 text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
             무료로 시작하기 <ChevronRight />
           </Link>
         </div>
