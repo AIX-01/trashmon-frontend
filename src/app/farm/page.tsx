@@ -76,7 +76,7 @@ export default function FarmPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
             <p className="text-4xl mb-4">🍃</p>
             <p className="text-white text-xl font-bold drop-shadow-md">아직 농장이 비어있어요!</p>
-            <p className="text-white/80 text-sm mt-2">카메라로 쓰레기를 찍어 몬스터를 데려오세요.</p>
+            <p className="text-white/80 text-sm mt-2">카메라로 몬스터를 찍어 몬스터를 데려오세요.</p>
           </div>
         ) : (
           monsters.map((monster) => (

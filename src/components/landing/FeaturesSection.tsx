@@ -4,7 +4,7 @@ const FEATURES = [
   {
     icon: <Award className="text-orange-500" size={32} />,
     title: "보물 수집 시스템",
-    desc: "길거리에 버려진 쓰레기를 줍고 '보물'로 등록해요. 성취감을 높여주는 레벨업 시스템!",
+    desc: "길거리에 버려진 몬스터를 줍고 '보물'로 등록해요. 성취감을 높여주는 레벨업 시스템!",
     color: "bg-orange-50"
   },
   {

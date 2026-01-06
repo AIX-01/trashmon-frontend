@@ -13,7 +13,7 @@ export default function HeroSection() {
             🎉 2024년 우리 아이 첫 환경 교육 앱 1위
           </div>
           <h1 className="font-jua text-5xl md:text-6xl leading-tight text-gray-900 mb-6">
-            쓰레기가 <span className="text-orange-500">보물</span>이 되는<br />
+            몬스터가 <span className="text-orange-500">보물</span>이 되는<br />
             놀라운 마법!
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">

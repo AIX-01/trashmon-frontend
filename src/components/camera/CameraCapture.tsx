@@ -68,7 +68,7 @@ export default function CameraCapture({ onCapture, isDisabled, shouldRestart }: 
       <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
         {/* 상단 안내 메시지 */}
         <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-6 py-3 rounded-2xl border border-white/20 shadow-lg">
-          <p className="text-lg font-bold">쓰레기를 화면 중앙에 맞춰주세요</p>
+          <p className="text-lg font-bold">몬스터를 화면 중앙에 맞춰주세요</p>
         </div>
 
         {/* 중앙 타겟팅 시스템 (반응형) */}

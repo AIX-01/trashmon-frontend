@@ -14,9 +14,9 @@ export default function EducationSection() {
             </div>
           </div>
           <div className="flex-1 order-1 md:order-2">
-            <h3 className="font-jua text-3xl mb-4 text-gray-900">관찰력이 쑥쑥!<br/>쓰레기 찾기 놀이</h3>
+            <h3 className="font-jua text-3xl mb-4 text-gray-900">관찰력이 쑥쑥!<br/>몬스터 찾기 놀이</h3>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              그냥 지나치던 쓰레기도 이제는 보물처럼! <br/>
+              그냥 지나치던 몬스터도 이제는 보물처럼! <br/>
               주변 환경에 관심을 갖고 관찰하는 습관을 길러줍니다.
             </p>
             <ul className="space-y-3">
