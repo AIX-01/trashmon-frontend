@@ -1,0 +1,49 @@
+// src/lib/monsters.ts
+import { CategoryGuide, MonsterRank } from '@/types';
+
+// 유효한 카테고리 (5개만 허용)
+export const VALID_CATEGORIES = ['종이', '유리', '플라스틱', '캔', '일반쓰레기'] as const;
+export type ValidCategory = typeof VALID_CATEGORIES[number];
+
+// 카테고리 유효성 검사
+export function isValidCategory(category: string): category is ValidCategory {
+  return VALID_CATEGORIES.includes(category as ValidCategory);
+}
+
+// 카테고리별 가이드 정보 (하드코딩)
+export const CATEGORY_GUIDES: Record<ValidCategory, CategoryGuide> = {
+  '종이': {
+    tips: ['첫째, 테이프나 스티커는 떼어볼까요?', '둘째, 이제 납작하게 접어봐요!', '셋째, 종이 분류함에 쏙 넣으면 성공!'],
+  },
+  '유리': {
+    tips: ['첫째, 다 마셨나요? 물로 헹궈주세요!', '둘째, 뚜껑은 따로 빼요!', '셋째, 유리 분류함에 깨지지 않게 살짝 넣으면 성공!'],
+  },
+  '플라스틱': {
+    tips: ['첫째, 라벨은 쓱 벗기기!', '둘째, 꾹꾹 눌러 작게 만들어요.', '셋째, 플라스틱 분류함에 퐁 던지면 성공!'],
+  },
+  '캔': {
+    tips: ['첫째, 남은 음료를 싹 비우고 물로 한번 헹궈요', '둘째, 꾹 눌러 납작하게 해요.', '셋째, 캔 분류함에 쏙 넣으면 성공!'],
+  },
+  '일반쓰레기': {
+    tips: ['첫째, 냄새나거나 더러운 건 일반쓰레기!', '둘째, 물기 쏙 빼면 더 좋아요.', '셋째, 일반쓰레기 분류함에 쏙 넣으면 성공!'],
+  }
+};
+
+// 카테고리로 가이드 조회 (유효하지 않으면 null)
+export function getGuideByCategory(category: string): CategoryGuide | null {
+  if (!isValidCategory(category)) return null;
+  return CATEGORY_GUIDES[category];
+}
+
+/**
+ * 랜덤 랭크 생성
+ * S=10%, A=20%, B=30%, C=40%
+ */
+export function generateRandomRank(): MonsterRank {
+  const random = Math.random() * 100;
+
+  if (random < 10) return 'S';
+  if (random < 30) return 'A';
+  if (random < 60) return 'B';
+  return 'C';
+}
