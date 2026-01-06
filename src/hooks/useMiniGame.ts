@@ -80,7 +80,7 @@ export const useMiniGame = () => {
     setTimeout(() => setIsTargetHit(false), 150);
     const colors = ['#4ade80', '#60a5fa', '#f472b6', '#fbbf24', '#ffffff'];
     const newParticles = Array.from({ length: 8 }).map((_, i) => ({
-      id: Date.now() + i, x, y, color: colors[Math.floor(Math.random() * colors.length)],
+      id: Date.now() + i + Math.random(), x, y, color: colors[Math.floor(Math.random() * colors.length)],
       angle: (i * 45) + Math.random() * 20, distance: 50 + Math.random() * 50
     }));
     setParticles(prev => [...prev, ...newParticles]);
