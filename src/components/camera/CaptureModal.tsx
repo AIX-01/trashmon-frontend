@@ -88,8 +88,15 @@ export default function CaptureModal({
 
   if (!isOpen) return null;
 
-  const totalTips = tips.length > 0 ? tips.length : 1;
-  const dirtOpacity = step === 'guide' ? Math.max(0, 1 - (currentTipIndex + 1) / totalTips) : 0;
+  const maxBlur = 10; // 최대 블러 레벨
+  let blurLevel = 0;
+  if (step === 'intro') {
+    blurLevel = maxBlur;
+  } else if (step === 'guide') {
+    const totalTips = tips.length > 0 ? tips.length : 1;
+    blurLevel = Math.max(0, maxBlur * (1 - (currentTipIndex) / totalTips));
+  }
+
 
   const renderContent = () => {
     if (step === 'loading') {
@@ -113,6 +120,7 @@ export default function CaptureModal({
                 onStartGuide={onStartGuide}
                 category={category}
                 showHelpBubble={showHelpBubble}
+                blurLevel={blurLevel}
               />
             )}
             {step === 'guide' && (
@@ -122,7 +130,7 @@ export default function CaptureModal({
                 currentTipIndex={currentTipIndex}
                 onNextTip={onNextTip}
                 monsterImage={monsterImage}
-                dirtOpacity={dirtOpacity}
+                blurLevel={blurLevel}
                 showHelpBubble={showHelpBubble}
               />
             )}

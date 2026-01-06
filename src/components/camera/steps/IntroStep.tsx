@@ -9,9 +9,10 @@ interface IntroStepProps {
   onStartGuide: () => void;
   category: string;
   showHelpBubble: boolean;
+  blurLevel: number;
 }
 
-const IntroStep: React.FC<IntroStepProps> = ({ monsterImage, onStartGuide, category, showHelpBubble }) => {
+const IntroStep: React.FC<IntroStepProps> = ({ monsterImage, onStartGuide, category, showHelpBubble, blurLevel }) => {
   const getHelperImage = (category: string) => {
     switch (category) {
       case '종이':
@@ -34,29 +35,15 @@ const IntroStep: React.FC<IntroStepProps> = ({ monsterImage, onStartGuide, categ
   return (
     <div className="flex flex-col items-center text-center flex-grow justify-center">
       <div className="w-48 h-48 relative mb-6">
-        <div 
-          className="w-full h-full relative"
+        <div
+          className="w-full h-full relative transition-all duration-500"
           style={{
+            filter: `blur(${blurLevel}px)`,
             maskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
             WebkitMaskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
           }}
         >
           <Image src={monsterImage} alt="몬스터" fill className="object-contain" unoptimized />
-          <div 
-            className="absolute inset-0 transition-opacity duration-500 pointer-events-none z-10"
-            style={{ 
-              opacity: 1,
-              background: `
-                radial-gradient(circle at 20% 30%, rgba(60, 50, 40, 0.9) 0%, transparent 30%),
-                radial-gradient(circle at 70% 60%, rgba(70, 60, 50, 0.8) 0%, transparent 35%)
-              `,
-              mixBlendMode: 'multiply'
-            }}
-          />
-          <div 
-            className="absolute inset-0 bg-stone-700/50 mix-blend-hard-light transition-opacity duration-500 pointer-events-none z-10"
-            style={{ opacity: 1 }}
-          />
         </div>
       </div>
 

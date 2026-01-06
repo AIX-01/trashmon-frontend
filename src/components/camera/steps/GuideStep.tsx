@@ -10,7 +10,7 @@ interface GuideStepProps {
   currentTipIndex: number;
   onNextTip: () => void;
   monsterImage: string;
-  dirtOpacity: number;
+  blurLevel: number; // dirtOpacity 대신 사용
   showHelpBubble: boolean;
 }
 
@@ -20,7 +20,7 @@ const GuideStep: React.FC<GuideStepProps> = ({
   currentTipIndex,
   onNextTip,
   monsterImage,
-  dirtOpacity,
+  blurLevel, // dirtOpacity 대신 사용
   showHelpBubble,
 }) => {
   const currentTip = tips[currentTipIndex];
@@ -47,30 +47,15 @@ const GuideStep: React.FC<GuideStepProps> = ({
   return (
     <div className="flex flex-col items-center text-center">
       <div className="w-48 h-48 relative mb-4">
-        <div 
-          className="w-full h-full relative"
+        <div
+          className="w-full h-full relative transition-all duration-500"
           style={{
+            filter: `blur(${blurLevel}px)`,
             maskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
             WebkitMaskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
           }}
         >
           <Image src={monsterImage} alt="몬스터" fill className="object-contain" unoptimized />
-          <div 
-            className="absolute inset-0 transition-opacity duration-500 pointer-events-none z-10"
-            style={{ 
-              opacity: dirtOpacity,
-              background: `
-                radial-gradient(circle at 20% 30%, rgba(60, 50, 40, 0.9) 0%, transparent 30%),
-                radial-gradient(circle at 70% 60%, rgba(70, 60, 50, 0.8) 0%, transparent 35%),
-                radial-gradient(circle at 40% 80%, rgba(50, 40, 30, 0.9) 0%, transparent 25%)
-              `,
-              mixBlendMode: 'multiply'
-            }}
-          />
-          <div 
-            className="absolute inset-0 bg-stone-700/50 mix-blend-hard-light transition-opacity duration-500 pointer-events-none z-10"
-            style={{ opacity: dirtOpacity }}
-          />
         </div>
       </div>
 
