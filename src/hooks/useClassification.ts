@@ -6,9 +6,9 @@ import { getGuideByCategory, generateRandomRank, isValidCategory } from '@/lib/m
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const LOADING_MESSAGES = [
-  '깨끗해지고 있어... ✨',
   '어떤 친구일까? 🤔',
   '깨끗이 씻어주자... 💧',
+  '깨끗해지고 있어... ✨',
 ];
 
 export type ModalStep = 'loading' | 'intro' | 'guide' | 'naming' | 'complete' | 'error';
