@@ -33,6 +33,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* 파비콘 */}
+        <link rel="icon" href="/favicon.ico" />
         {/* PWA 아이콘 */}
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         {/* Google Fonts - Noto Sans KR */}

@@ -24,7 +24,6 @@ export default function ActionButtons() {
           onMouseLeave={() => setIsHovered(null)}
         >
           {/* 배경 효과 */}
-          <div className="absolute inset-0 bg-[url('/pattern-dots.svg')] opacity-10"></div>
           <div className="absolute top-0 left-0 w-full h-1/3 bg-white/20 rounded-t-3xl"></div>
           
           {/* 아이콘 */}

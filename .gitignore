@@ -5,6 +5,7 @@ Icon?
 desktop.ini
 node_modules
 
+!public/icons/
 !src/components/common/icons/
 !src/components/common/icons/*.jsx
 
