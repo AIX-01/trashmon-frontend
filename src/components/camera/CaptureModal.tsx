@@ -22,7 +22,6 @@ interface CaptureModalProps {
   monsterRank: MonsterRank;
   tips: string[];
   currentTipIndex: number;
-  errorMessage: string;
   onNameChange: (name: string) => void;
   onNameSubmit: () => void;
   onStartGuide: () => void;
@@ -43,7 +42,6 @@ export default function CaptureModal({
   monsterRank,
   tips,
   currentTipIndex,
-  errorMessage,
   onNameChange,
   onNameSubmit,
   onStartGuide,
@@ -151,7 +149,6 @@ export default function CaptureModal({
             )}
             {step === 'error' && (
               <ErrorStep
-                errorMessage={errorMessage}
                 onCaptureAgain={onCaptureAgain}
               />
             )}

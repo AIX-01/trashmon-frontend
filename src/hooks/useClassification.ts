@@ -27,8 +27,6 @@ export function useClassification() {
   const [monsterRank, setMonsterRank] = useState<MonsterRank>('C');
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
-  const [error, setError] = useState<string>('');
-
   useEffect(() => {
     if (modalStep === 'loading' && isModalOpen) {
       let messageIndex = 0;
@@ -52,7 +50,6 @@ export function useClassification() {
     setShouldRestartCamera(false);
     setIsModalOpen(true);
     setModalStep('loading');
-    setError('');
     setResult(null);
     setCurrentTipIndex(0);
 
@@ -63,17 +60,17 @@ export function useClassification() {
       const formData = new FormData();
       formData.append('file', imageBlob, 'capture.jpg');
       const response = await fetch(`${API_URL}/classify`, { method: 'POST', body: formData });
-      if (!response.ok) throw new Error('앗, 연결이 잘 안 돼요! 잠시 후 다시 시도해주세요.');
+      if (!response.ok) throw new Error('API request failed');
       const apiData: unknown = await response.json();
       if (!apiData || typeof apiData !== 'object' || !('category' in apiData) || !('monster_image' in apiData) || typeof (apiData as ApiResponse).category !== 'string' || typeof (apiData as ApiResponse).monster_image !== 'string') {
-        throw new Error('앗, 뭔가 잘못됐어요! 다시 찍어볼까요?');
+        throw new Error('Invalid API response');
       }
       const validatedData = apiData as ApiResponse;
       if (!isValidCategory(validatedData.category)) {
-        throw new Error('음... 이게 뭔지 모르겠어요! 다른 쓰레기를 찍어볼까요?');
+        throw new Error('Invalid category');
       }
       const guide = getGuideByCategory(validatedData.category);
-      if (!guide) throw new Error('어라? 분리수거 방법을 찾을 수 없어요!');
+      if (!guide) throw new Error('Guide not found');
 
       const classificationResult: ClassificationResult = {
         category: validatedData.category,
@@ -86,8 +83,7 @@ export function useClassification() {
       setMonsterRank(generateRandomRank());
       setModalStep('intro');
     } catch (err) {
-      console.error('분류 요청 실패:', err);
-      setError(err instanceof Error ? err.message : '몬스터를 찾는 데 실패했어요.');
+      console.error('Classification failed:', err);
       setModalStep('error');
     }
   }, []);
@@ -130,10 +126,6 @@ export function useClassification() {
   const handleRelease = resetState;
   const handleCaptureAgain = resetState;
   const handleGoToCollection = () => setIsModalOpen(false);
-  const handleErrorDismiss = () => {
-    setError('');
-    setIsModalOpen(false);
-  };
 
   return {
     isModalOpen,
@@ -145,7 +137,6 @@ export function useClassification() {
     monsterName,
     monsterRank,
     currentTipIndex,
-    error,
     handleCapture,
     handleNameChange,
     handleNameSubmit,
@@ -154,6 +145,5 @@ export function useClassification() {
     handleRelease,
     handleCaptureAgain,
     handleGoToCollection,
-    handleErrorDismiss,
   };
 }

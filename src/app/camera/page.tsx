@@ -15,7 +15,6 @@ export default function CameraPage() {
     monsterName,
     monsterRank,
     currentTipIndex,
-    error,
     handleCapture,
     handleNameChange,
     handleNameSubmit,
@@ -24,7 +23,6 @@ export default function CameraPage() {
     handleRelease,
     handleCaptureAgain,
     handleGoToCollection,
-    handleErrorDismiss,
   } = useClassification();
 
   return (
@@ -46,7 +44,6 @@ export default function CameraPage() {
         monsterRank={monsterRank}
         tips={result?.guide?.tips || []}
         currentTipIndex={currentTipIndex}
-        errorMessage={error}
         onNameChange={handleNameChange}
         onNameSubmit={handleNameSubmit}
         onStartGuide={handleStartGuide} // ✨ FIX: prop으로 전달
