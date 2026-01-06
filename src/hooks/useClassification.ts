@@ -62,6 +62,7 @@ export function useClassification() {
       const response = await fetch(`${API_URL}/classify`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('API request failed');
       const apiData: unknown = await response.json();
+      console.log('API Response:', apiData); // 응답 로깅 추가
       if (!apiData || typeof apiData !== 'object' || !('category' in apiData) || !('monster_image' in apiData) || typeof (apiData as ApiResponse).category !== 'string' || typeof (apiData as ApiResponse).monster_image !== 'string') {
         throw new Error('Invalid API response');
       }
@@ -125,7 +126,6 @@ export function useClassification() {
 
   const handleRelease = resetState;
   const handleCaptureAgain = resetState;
-  const handleGoToCollection = () => setIsModalOpen(false);
 
   return {
     isModalOpen,
@@ -144,6 +144,5 @@ export function useClassification() {
     handleNextTip,
     handleRelease,
     handleCaptureAgain,
-    handleGoToCollection,
   };
 }

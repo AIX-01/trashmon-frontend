@@ -29,6 +29,7 @@ interface CaptureModalProps {
   onRelease: () => void;
   onGoToCollection: () => void;
   onCaptureAgain: () => void;
+  onGoToFarm: () => void;
 }
 
 export default function CaptureModal({
@@ -49,10 +50,10 @@ export default function CaptureModal({
   onRelease,
   onGoToCollection,
   onCaptureAgain,
+  onGoToFarm,
 }: CaptureModalProps) {
   const { speak, startNewSession, isAvailable } = useTTS();
   const [showHelpBubble, setShowHelpBubble] = useState(false);
-  const [showThanksBubble, setShowThanksBubble] = useState(false);
 
   // 말풍선 및 TTS 로직
   useEffect(() => {
@@ -61,8 +62,8 @@ export default function CaptureModal({
     const messages: Record<ModalStep, string> = {
       intro: "가이드를 따라서 나를 도와줘!",
       naming: "나를 도와줘서 고마워!",
-      complete: "고마워~!",
-      loading: '', guide: '', error: '', // Add other steps to satisfy type
+      complete: '',
+      loading: '', guide: '', error: '',
     };
 
     const message = messages[step];
@@ -70,7 +71,7 @@ export default function CaptureModal({
       startNewSession();
       speak(message);
       
-      const bubbleSetter = step === 'intro' || step === 'naming' ? setShowHelpBubble : setShowThanksBubble;
+      const bubbleSetter = setShowHelpBubble;
       bubbleSetter(true);
       const timer = setTimeout(() => bubbleSetter(false), 4000);
       return () => clearTimeout(timer);
@@ -98,84 +99,87 @@ export default function CaptureModal({
   }
 
 
-  const renderContent = () => {
-    if (step === 'loading') {
-      return <LoadingMiniGame loadingMessage={loadingMessage} capturedImage={capturedImage} />;
-    }
-
-    return (
-      <>
-        {capturedImage && (
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${capturedImage})`, filter: 'blur(20px) brightness(0.5)', transform: 'scale(1.1)' }}
+  const renderStepContent = () => {
+    switch (step) {
+      case 'intro':
+        return (
+          <IntroStep
+            monsterImage={monsterImage}
+            onStartGuide={onStartGuide}
+            category={category}
+            showHelpBubble={showHelpBubble}
+            blurLevel={blurLevel}
           />
-        )}
-        {!capturedImage && <div className="absolute inset-0 bg-black/70" />}
-        <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in relative z-10 flex flex-col min-h-[80vh] sm:min-h-0">
-          <div className="p-8 flex-grow flex flex-col">
-            {step === 'intro' && (
-              <IntroStep
-                monsterImage={monsterImage}
-                onStartGuide={onStartGuide}
-                category={category}
-                showHelpBubble={showHelpBubble}
-                blurLevel={blurLevel}
-              />
-            )}
-            {step === 'guide' && (
-              <GuideStep
-                category={category}
-                tips={tips}
-                currentTipIndex={currentTipIndex}
-                onNextTip={onNextTip}
-                monsterImage={monsterImage}
-                blurLevel={blurLevel}
-                showHelpBubble={showHelpBubble}
-              />
-            )}
-            {step === 'naming' && (
-              <NamingStep
-                category={category}
-                monsterImage={monsterImage}
-                monsterName={monsterName}
-                monsterRank={monsterRank}
-                onNameChange={onNameChange}
-                onNameSubmit={onNameSubmit}
-                onRelease={onRelease}
-                showHelpBubble={showHelpBubble}
-              />
-            )}
-            {step === 'complete' && (
-              <CompleteStep
-                monsterName={monsterName}
-                monsterImage={monsterImage}
-                showThanksBubble={showThanksBubble}
-                onCaptureAgain={onCaptureAgain}
-                onGoToCollection={onGoToCollection}
-              />
-            )}
-            {step === 'error' && (
-              <ErrorStep
-                onCaptureAgain={onCaptureAgain}
-              />
-            )}
-          </div>
-        </div>
-      </>
-    );
+        );
+      case 'guide':
+        return (
+          <GuideStep
+            category={category}
+            tips={tips}
+            currentTipIndex={currentTipIndex}
+            onNextTip={onNextTip}
+            monsterImage={monsterImage}
+            blurLevel={blurLevel}
+            showHelpBubble={showHelpBubble}
+          />
+        );
+      case 'naming':
+        return (
+          <NamingStep
+            category={category}
+            monsterImage={monsterImage}
+            monsterName={monsterName}
+            monsterRank={monsterRank}
+            onNameChange={onNameChange}
+            onNameSubmit={onNameSubmit}
+            onRelease={onRelease}
+            showHelpBubble={showHelpBubble}
+          />
+        );
+      case 'complete':
+        return (
+          <CompleteStep
+            monsterName={monsterName}
+            monsterImage={monsterImage}
+            category={category}
+            monsterRank={monsterRank}
+            onCaptureAgain={onCaptureAgain}
+            onGoToCollection={onGoToCollection}
+            onGoToFarm={onGoToFarm}
+          />
+        );
+      case 'error':
+        return <ErrorStep onCaptureAgain={onCaptureAgain} />;
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {renderContent()}
+      {step === 'loading' ? (
+        <LoadingMiniGame loadingMessage={loadingMessage} capturedImage={capturedImage} />
+      ) : (
+        <>
+          {capturedImage && (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${capturedImage})`, filter: 'blur(20px) brightness(0.5)', transform: 'scale(1.1)' }}
+            />
+          )}
+          {!capturedImage && <div className="absolute inset-0 bg-black/70" />}
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in relative z-10 flex flex-col min-h-[80vh] sm:min-h-0">
+            <div className="p-8 flex-grow flex flex-col justify-center">
+              {renderStepContent()}
+            </div>
+          </div>
+        </>
+      )}
       <style jsx>{`
         @keyframes bounce-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
         @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
         .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>

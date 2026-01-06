@@ -1,10 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import CameraCapture from '@/components/camera/CameraCapture';
 import CaptureModal from '@/components/camera/CaptureModal';
 import { useClassification } from '@/hooks/useClassification';
 
 export default function CameraPage() {
+  const router = useRouter();
   const {
     isModalOpen,
     modalStep,
@@ -18,12 +20,23 @@ export default function CameraPage() {
     handleCapture,
     handleNameChange,
     handleNameSubmit,
-    handleStartGuide, // ✨ FIX: 누락된 핸들러 추가
+    handleStartGuide,
     handleNextTip,
     handleRelease,
-    handleCaptureAgain,
-    handleGoToCollection,
+    handleCaptureAgain: resetCamera,
   } = useClassification();
+
+  const handleGoToFarm = () => {
+    router.push('/farm');
+  };
+
+  const handleGoToCollection = () => {
+    router.push('/collection');
+  };
+
+  const handleCaptureAgain = () => {
+    resetCamera();
+  };
 
   return (
     <>
@@ -46,11 +59,12 @@ export default function CameraPage() {
         currentTipIndex={currentTipIndex}
         onNameChange={handleNameChange}
         onNameSubmit={handleNameSubmit}
-        onStartGuide={handleStartGuide} // ✨ FIX: prop으로 전달
+        onStartGuide={handleStartGuide}
         onNextTip={handleNextTip}
         onRelease={handleRelease}
         onGoToCollection={handleGoToCollection}
         onCaptureAgain={handleCaptureAgain}
+        onGoToFarm={handleGoToFarm}
       />
     </>
   );
