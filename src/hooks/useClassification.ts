@@ -3,7 +3,7 @@ import { ApiResponse, ClassificationResult, MonsterRank } from '@/types';
 import { saveToCollection } from '@/lib/collectionStorage';
 import { getGuideByCategory, generateRandomRank, isValidCategory } from '@/lib/monsters';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = '';
 
 const LOADING_MESSAGES = [
   '어떤 친구일까? 🤔',
