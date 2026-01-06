@@ -4,7 +4,7 @@ const FEATURES = [
   {
     icon: <Award className="text-orange-500" size={32} />,
     title: "보물 수집 시스템",
-    desc: "길거리에 버려진 몬스터를 줍고 '보물'로 등록해요. 성취감을 높여주는 레벨업 시스템!",
+    desc: "다양한 랭크의 카드들! 성취감을 높여주는 레벨업 시스템!",
     color: "bg-orange-50"
   },
   {
@@ -15,8 +15,8 @@ const FEATURES = [
   },
   {
     icon: <Heart className="text-pink-500" size={32} />,
-    title: "캐릭터 꾸미기",
-    desc: "내가 그린 그림이나 사진으로 주인공 캐릭터를 만들 수 있어요. 애착을 가지고 플레이합니다.",
+    title: "귀여운 캐릭터",
+    desc: "고양이 기반의 몬스터는 정말 귀엽죠. 아이들이 애착을 가지고 플레이합니다.",
     color: "bg-pink-50"
   }
 ];

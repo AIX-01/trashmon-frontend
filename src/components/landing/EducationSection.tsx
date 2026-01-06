@@ -15,9 +15,9 @@ export default function EducationSection() {
             </div>
           </div>
           <div className="flex-1 order-1 md:order-2">
-            <h3 className="font-jua text-3xl mb-4 text-gray-900">관찰력이 쑥쑥!<br/>몬스터 찾기 놀이</h3>
+            <h3 className="font-jua text-3xl mb-4 text-gray-900">관찰력이 쑥쑥!<br/>분리수거 찾기 놀이</h3>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              그냥 지나치던 몬스터도 이제는 보물처럼! <br/>
+              그냥 지나치던 분리수거도 이제는 보물처럼! <br/>
               주변 환경에 관심을 갖고 관찰하는 습관을 길러줍니다.
             </p>
             <ul className="space-y-3">
@@ -38,7 +38,7 @@ export default function EducationSection() {
               게임 미션을 통해 자연스럽게 올바른 방법을 익힙니다.
             </p>
             <ul className="space-y-3">
-              {['재질별 특징 이해', '소근육 발달 놀이', '시민 의식 함양'].map((item, i) => (
+              {['재질별 특징 이해', '발달 놀이', '시민 의식 함양'].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-gray-700">
                   <CheckCircle className="text-green-500" size={20} /> {item}
                 </li>
