@@ -55,7 +55,14 @@ export default function CaptureModal({
   const { speak, startNewSession, isAvailable } = useTTS();
   const [showHelpBubble, setShowHelpBubble] = useState(false);
 
-  // 말풍선 및 TTS 로직
+  // 로딩 단계 TTS
+  useEffect(() => {
+    if (isOpen && step === 'loading' && isAvailable) {
+      speak(loadingMessage);
+    }
+  }, [isOpen, step, loadingMessage, isAvailable, speak]);
+
+  // 말풍선 및 TTS 로직 (로딩 제외)
   useEffect(() => {
     if (!isAvailable) return;
 
@@ -63,7 +70,9 @@ export default function CaptureModal({
       intro: "가이드를 따라서 나를 도와줘!",
       naming: "나를 도와줘서 고마워!",
       complete: '',
-      loading: '', guide: '', error: '',
+      loading: '', 
+      guide: '', 
+      error: '',
     };
 
     const message = messages[step];
@@ -71,13 +80,16 @@ export default function CaptureModal({
       startNewSession();
       speak(message);
       
-      const bubbleSetter = setShowHelpBubble;
-      bubbleSetter(true);
-      const timer = setTimeout(() => bubbleSetter(false), 4000);
-      return () => clearTimeout(timer);
+      if (step === 'intro' || step === 'naming') {
+        const bubbleSetter = setShowHelpBubble;
+        bubbleSetter(true);
+        const timer = setTimeout(() => bubbleSetter(false), 4000);
+        return () => clearTimeout(timer);
+      }
     }
   }, [step, isAvailable, startNewSession, speak]);
 
+  // 가이드 단계 TTS
   useEffect(() => {
     if (step === 'guide' && isAvailable && tips.length > 0 && currentTipIndex >= 0) {
       const currentTip = tips[currentTipIndex];

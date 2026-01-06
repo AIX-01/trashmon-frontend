@@ -120,7 +120,6 @@ export function useClassification() {
     setMonsterName('');
     setMonsterRank('C');
     setCurrentTipIndex(0);
-    setModalStep('loading');
     setShouldRestartCamera(true);
   }, []);
 
