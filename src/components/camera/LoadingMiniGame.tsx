@@ -22,12 +22,12 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     balls,
     particles,
     score,
+    hp, // dirtOpacity 대신 hp 사용
     isTargetHit,
     gameState,
     startTurn,
     targetPos,
     targetRef,
-    dirtOpacity,
     handleTouch,
     handleHit,
     setBalls,
@@ -64,7 +64,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         </div>
       </div>
 
-      <p className="absolute top-12 w-full text-center text-gray-600 text-lg font-medium drop-shadow-sm animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
+      <p className="absolute top-12 w-full text-center text-gray-600 text-lg font-medium drop-shadow-sm animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 정화해주세요! 👇</p>
 
       <Target
         targetRef={targetRef}
@@ -72,7 +72,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         isTargetHit={isTargetHit}
         gameState={gameState}
         capturedImage={capturedImage}
-        dirtOpacity={dirtOpacity}
+        hp={hp} // dirtOpacity 대신 hp 전달
         score={score}
       />
 

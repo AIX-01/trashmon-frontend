@@ -23,6 +23,7 @@ export const useMiniGame = () => {
   const [balls, setBalls] = useState<Ball[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [score, setScore] = useState(0);
+  const [hp, setHp] = useState(1); // 몬스터 체력 (1: max, 0: min)
   const [isTargetHit, setIsTargetHit] = useState(false);
   const [gameState, setGameState] = useState<'turning' | 'rainbow' | 'playing'>('turning');
   const [startTurn, setStartTurn] = useState(false);
@@ -31,7 +32,7 @@ export const useMiniGame = () => {
 
   // Game state transitions
   useEffect(() => {
-    const turnStartTimer = setTimeout(() => setStartTurn(true), 1000); // Dissolve 시간을 위해 1초로 변경
+    const turnStartTimer = setTimeout(() => setStartTurn(true), 1000);
     const turnEndTimer = setTimeout(() => setGameState('rainbow'), 1200);
     const rainbowTimer = setTimeout(() => {
       setGameState('playing');
@@ -56,7 +57,7 @@ export const useMiniGame = () => {
 
   // Touch/Click handler
   const handleTouch = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing') return; // 게임 플레이 중일 때만 공격 가능
     let clientX, clientY;
     if ('touches' in e) {
       clientX = e.touches[0].clientX;
@@ -77,6 +78,7 @@ export const useMiniGame = () => {
   const handleHit = useCallback((x: number, y: number) => {
     setIsTargetHit(true);
     setScore(prev => prev + 1);
+    setHp(prevHp => Math.max(0, prevHp - 0.15)); // 공격 받을 때마다 체력 감소
     setTimeout(() => setIsTargetHit(false), 150);
     const colors = ['#4ade80', '#60a5fa', '#f472b6', '#fbbf24', '#ffffff'];
     const newParticles = Array.from({ length: 8 }).map((_, i) => ({
@@ -94,18 +96,16 @@ export const useMiniGame = () => {
     }
   }, [particles]);
 
-  const dirtOpacity = Math.max(0, 1 - score * 0.15);
-
   return {
     balls,
     particles,
     score,
+    hp,
     isTargetHit,
     gameState,
     startTurn,
     targetPos,
     targetRef,
-    dirtOpacity,
     handleTouch,
     handleHit,
     setBalls,

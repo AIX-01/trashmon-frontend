@@ -8,7 +8,7 @@ interface TargetProps {
   isTargetHit: boolean;
   gameState: 'turning' | 'rainbow' | 'playing';
   capturedImage: string;
-  dirtOpacity: number;
+  hp: number; // 체력 (0.0 ~ 1.0)
   score: number;
 }
 
@@ -18,9 +18,11 @@ const Target: React.FC<TargetProps> = ({
   isTargetHit,
   gameState,
   capturedImage,
-  dirtOpacity,
+  hp,
   score,
 }) => {
+  const dirtOpacity = hp; // hp를 오염 효과의 투명도로 사용
+
   return (
     <div 
       ref={targetRef}
@@ -37,6 +39,7 @@ const Target: React.FC<TargetProps> = ({
         >
            <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${capturedImage})` }} />
            
+           {/* 오염 효과 오버레이 */}
            <div 
              className="absolute inset-0 transition-opacity duration-500 pointer-events-none z-10"
              style={{ 
@@ -55,6 +58,31 @@ const Target: React.FC<TargetProps> = ({
              className="absolute inset-0 bg-stone-700/50 mix-blend-hard-light transition-opacity duration-500 pointer-events-none z-10"
              style={{ opacity: dirtOpacity }}
            />
+
+           {/* 스크래치 효과 오버레이 */}
+           <div 
+            className="absolute inset-0 transition-opacity duration-500 pointer-events-none z-10"
+            style={{ opacity: dirtOpacity * 0.7, mixBlendMode: 'overlay' }}
+           >
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="scratches" patternUnits="userSpaceOnUse" width="100" height="100">
+                  <path d="M0 10 L100 10 M10 0 L10 100 M20 0 L20 100 M0 30 L100 30 M0 50 L100 50 M0 70 L100 70 M0 90 L100 90" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                  <path d="M5 5 L95 95 M5 95 L95 5" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#scratches)"/>
+            </svg>
+           </div>
+
+           {/* 파리 애니메이션 */}
+           {hp > 0.5 && (
+             <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
+               <div className="fly fly-1" />
+               <div className="fly fly-2" />
+               <div className="fly fly-3" />
+             </div>
+           )}
         </div>
         {isTargetHit && <div className="absolute inset-0 bg-white/50 rounded-full animate-ping blur-xl" />}
         {score > 0 && (

@@ -144,3 +144,36 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* 미니게임 파리 애니메이션 */
+@keyframes fly {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(40px, -30px) rotate(20deg); }
+  50% { transform: translate(80px, 10px) rotate(0deg); }
+  75% { transform: translate(20px, 40px) rotate(-20deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.fly {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  animation: fly 3s linear infinite;
+  opacity: 0.9;
+}
+
+.fly::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'%3E%3Ccircle cx='12' cy='14' r='4'/%3E%3Cellipse cx='8' cy='9' rx='4' ry='2' transform='rotate(-30 8 9)'/%3E%3Cellipse cx='16' cy='9' rx='4' ry='2' transform='rotate(30 16 9)'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+.fly-1 { animation-delay: 0s; top: 20%; left: 30%; }
+.fly-2 { animation-delay: -1s; top: 60%; left: 70%; transform: scaleX(-1); } /* 좌우 반전 */
+.fly-3 { animation-delay: -2s; top: 40%; left: 10%; }
