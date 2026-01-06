@@ -49,7 +49,7 @@ const Monster: React.FC<MonsterProps> = ({ monster, isDragging, onPointerDown, o
         {/* 몬스터 이미지 */}
         <div 
           className={`
-            w-32 h-32 relative transition-all duration-500
+            w-40 h-40 relative transition-all duration-500
             ${monster.action === 'jump' ? 'animate-bounce-fast' : ''}
             ${monster.direction > 90 && monster.direction < 270 ? 'scale-x-[-1]' : ''}
           `}

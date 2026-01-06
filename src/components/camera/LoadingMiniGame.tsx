@@ -73,7 +73,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         </div>
       </div>
 
-      <p className="absolute top-12 left-1/2 -translate-x-1/2 text-gray-600 text-lg font-medium drop-shadow-sm text-center animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
+      <p className="absolute top-12 w-full text-center text-gray-600 text-lg font-medium drop-shadow-sm animate-bounce bg-white/60 px-4 py-2 rounded-full font-jua shadow-sm">화면을 터치해서 몬스터를 잡아보세요! 👇</p>
 
       <Target
         targetRef={targetRef}
@@ -107,7 +107,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
         @keyframes explode { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + (cos(var(--angle)) * var(--distance))), calc(-50% + (sin(var(--angle)) * var(--distance)))) scale(0); opacity: 0; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-slow { animation: spin-slow 20s linear infinite; }
