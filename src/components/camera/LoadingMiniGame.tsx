@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import { useMiniGame } from '@/hooks/useMiniGame';
 import GameBackground from './minigame/GameBackground';
@@ -44,17 +44,16 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
       <MagicWandCursor />
 
       <div 
-        className="absolute inset-0 z-[60] origin-left bg-black shadow-2xl"
+        className="absolute inset-0 z-[60] bg-black"
         style={{
-          backgroundImage: `url(${capturedImage})`, backgroundSize: 'cover', backgroundPosition: 'center',
-          transition: 'transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000), opacity 0.5s ease-in-out 0.7s',
-          transform: startTurn ? 'perspective(2000px) rotateY(-110deg)' : 'perspective(2000px) rotateY(0deg)',
-          opacity: startTurn ? 0 : 1, pointerEvents: 'none',
+          backgroundImage: `url(${capturedImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transition: 'opacity 1s ease-in-out',
+          opacity: startTurn ? 0 : 1,
+          pointerEvents: 'none',
         }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/20" />
-        <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/30 to-transparent" />
-      </div>
+      />
 
       <GameBackground gameState={gameState} />
 

@@ -31,7 +31,7 @@ export const useMiniGame = () => {
 
   // Game state transitions
   useEffect(() => {
-    const turnStartTimer = setTimeout(() => setStartTurn(true), 100);
+    const turnStartTimer = setTimeout(() => setStartTurn(true), 1000); // Dissolve 시간을 위해 1초로 변경
     const turnEndTimer = setTimeout(() => setGameState('rainbow'), 1200);
     const rainbowTimer = setTimeout(() => {
       setGameState('playing');
