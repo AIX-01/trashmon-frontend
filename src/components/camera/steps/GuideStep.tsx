@@ -62,9 +62,9 @@ const GuideStep: React.FC<GuideStepProps> = ({
       <div className="flex items-center gap-4 bg-gradient-to-r from-green-400 to-green-500 w-full p-4 rounded-xl mb-4">
         <div className="w-32 h-32 relative animate-float">
           {helperImage && <Image src={helperImage} alt={`${category} 도우미`} fill className="object-contain" />}
-          {showHelpBubble && <SpeechBubble text="가이드를 따라 분리수거를 도와주자!" />}
+          {showHelpBubble && <SpeechBubble text="함께 분리수거를 도와줘!" />}
         </div>
-        <p className="text-white font-bold text-xl">가이드를 따라 분리수거를 도와주자!</p>
+        <p className="text-white font-bold text-xl">순서대로 따라해봐요!</p>
       </div>
 
       <div className="w-full flex-1 min-h-[120px] mb-4 flex items-center justify-center bg-gray-50 p-6 rounded-xl border-l-4 border-green-400">

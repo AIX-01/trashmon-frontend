@@ -50,10 +50,10 @@ const IntroStep: React.FC<IntroStepProps> = ({ monsterImage, onStartGuide, categ
       <div className="flex items-center gap-4 w-full p-4 rounded-xl mb-4">
         <div className="w-48 h-48 relative animate-float">
           {helperImage && <Image src={helperImage} alt={`${category} 도우미`} fill className="object-contain" />}
-          {showHelpBubble && <SpeechBubble text="가이드를 따라서 나를 도와줘!" />}
+          {showHelpBubble && <SpeechBubble text="자 어서 따라해보자!" />}
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">가이드를 따라서 나를 도와줘!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">순서대로 따라해봐요!</h2>
           <p className="text-gray-500">분리수거 방법을 배우고 몬스터를 깨끗하게 만들어주세요.</p>
         </div>
       </div>
