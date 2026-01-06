@@ -23,14 +23,13 @@ export default function Navbar() {
           <div className="bg-green-500 p-2 rounded-xl">
             <Recycle className="text-white" size={24} />
           </div>
-          <span className="font-jua text-2xl text-green-800">분리수거 대모험</span>
+          <span className="font-jua text-2xl text-green-800">Trash Monster</span>
         </Link>
 
         {/* 데스크탑 메뉴 */}
         <div className="hidden md:flex items-center gap-8 font-medium text-gray-600">
           <a href="#features" className="hover:text-green-600 transition-colors">주요 기능</a>
           <a href="#education" className="hover:text-green-600 transition-colors">교육 효과</a>
-          <a href="#reviews" className="hover:text-green-600 transition-colors">후기</a>
         </div>
 
         {/* 모바일 메뉴 버튼 */}
@@ -44,7 +43,6 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t p-6 flex flex-col gap-4 shadow-lg absolute w-full">
           <a href="#features" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">주요 기능</a>
           <a href="#education" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">교육 효과</a>
-          <a href="#reviews" onClick={() => setIsMenuOpen(false)} className="py-2 border-b">후기</a>
           <Link href="/app" className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4 rounded-2xl font-bold shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
             무료로 시작하기 <ChevronRight />
           </Link>

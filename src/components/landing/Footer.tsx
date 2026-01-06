@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="col-span-1 md:col-span-2">
           <div className="flex items-center gap-2 mb-4 text-white">
             <Recycle size={24} />
-            <span className="font-jua text-2xl">분리수거 대모험</span>
+            <span className="font-jua text-2xl">Trash Monster</span>
           </div>
           <p className="text-sm leading-relaxed mb-6">
             아이들이 놀이를 통해 자연스럽게 환경 보호의 중요성을 깨닫고<br/>
