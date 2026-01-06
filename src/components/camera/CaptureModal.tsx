@@ -63,20 +63,26 @@ export default function CaptureModal({
       intro: "가이드를 따라서 나를 도와줘!",
       naming: "나를 도와줘서 고마워!",
       complete: '',
-      loading: '', guide: '', error: '',
+      loading: loadingMessage, 
+      guide: '', 
+      error: '',
     };
 
     const message = messages[step];
     if (message) {
-      startNewSession();
+      if (step !== 'loading') {
+        startNewSession();
+      }
       speak(message);
       
-      const bubbleSetter = setShowHelpBubble;
-      bubbleSetter(true);
-      const timer = setTimeout(() => bubbleSetter(false), 4000);
-      return () => clearTimeout(timer);
+      if (step === 'intro' || step === 'naming') {
+        const bubbleSetter = setShowHelpBubble;
+        bubbleSetter(true);
+        const timer = setTimeout(() => bubbleSetter(false), 4000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [step, isAvailable, startNewSession, speak]);
+  }, [step, isAvailable, startNewSession, speak, loadingMessage]);
 
   useEffect(() => {
     if (step === 'guide' && isAvailable && tips.length > 0 && currentTipIndex >= 0) {

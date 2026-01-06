@@ -3,7 +3,6 @@
 import React, { useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useMiniGame } from '@/hooks/useMiniGame';
-import { useTTS } from '@/hooks/useTTS';
 import GameBackground from './minigame/GameBackground';
 import MagicWandCursor from './minigame/MagicWandCursor';
 import Target from './minigame/Target';
@@ -34,14 +33,7 @@ export default function LoadingMiniGame({ loadingMessage, capturedImage }: Loadi
     setBalls,
   } = useMiniGame();
 
-  const { speak, isAvailable } = useTTS();
   const randomHelper = useMemo(() => HELPERS[Math.floor(Math.random() * HELPERS.length)], []);
-
-  useEffect(() => {
-    if (isAvailable && loadingMessage) {
-      speak(loadingMessage);
-    }
-  }, [isAvailable, loadingMessage, speak]);
 
   return (
     <div 
