@@ -3,7 +3,7 @@
 import React from 'react';
 
 interface TargetProps {
-  targetRef: React.RefObject<HTMLDivElement>;
+  targetRef: React.RefObject<HTMLDivElement | null>;
   targetPos: { x: number; y: number };
   isTargetHit: boolean;
   gameState: 'turning' | 'rainbow' | 'playing';

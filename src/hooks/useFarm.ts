@@ -12,7 +12,7 @@ export const useFarm = () => {
   const draggedMonsterIdRef = useRef<number | null>(null);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | null>(null);
 
   // 몬스터 데이터 로드
   useEffect(() => {
