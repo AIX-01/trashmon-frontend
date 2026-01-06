@@ -33,8 +33,8 @@ const Target: React.FC<TargetProps> = ({
         <div 
           className="w-full h-full shadow-2xl relative"
           style={{
-            maskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
-            WebkitMaskImage: 'radial-gradient(circle, white 50%, rgba(255, 255, 255, 0.5) 65%, transparent 80%)',
+            maskImage: 'radial-gradient(circle, white 50%, transparent 75%)',
+            WebkitMaskImage: 'radial-gradient(circle, white 50%, transparent 75%)',
           }}
         >
            <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${capturedImage})` }} />
